@@ -7,10 +7,10 @@ import ScrollLock from "react-scrolllock";
 type Props = {
   onClick?: () => void;
   isVisible: boolean;
-  // modalType?: ModalTypes;
+  modal?: React.ReactNode;
 };
 
-const Overlay = ({ onClick, isVisible }: Props) => {
+const Overlay = ({ onClick, isVisible, modal }: Props) => {
   const { loadingMessage, setLoadingMessage } = useIsLoading();
 
   return (
@@ -24,17 +24,9 @@ const Overlay = ({ onClick, isVisible }: Props) => {
             "opacity-0 pointer-events-none": !isVisible,
           })}
         >
-          {!!loadingMessage?.length && (
-            <div className="bg-stone-600 m-auto fixed top-1/2 left-1/2 centered p-6 rounded-xl">
-              <div className="text-center flex flex-col items-center justify-center">
-                <div className="font-medium text-2xl">{loadingMessage}</div>
-                <div className="py-6 italic">
-                  Please do not close this window
-                </div>
-                <div>
-                  <Spinner />
-                </div>
-              </div>
+          {!!modal && (
+            <div className="bg-amber-400 m-auto fixed top-1/2 left-1/2 centered p-6 rounded-xl shadow-deep-float max-w-[95vw] max-h-[95vh] overflow-y-auto">
+              {modal}
             </div>
           )}
         </div>
