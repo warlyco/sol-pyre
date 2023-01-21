@@ -1,8 +1,5 @@
 import classNames from "classnames";
-import Spinner from "features/UI/spinner";
-import { useIsLoading } from "hooks/is-loading";
 import ScrollLock from "react-scrolllock";
-// import { ModalTypes } from "types";
 
 type Props = {
   onClick?: () => void;
@@ -11,8 +8,6 @@ type Props = {
 };
 
 const Overlay = ({ onClick, isVisible, modal }: Props) => {
-  const { loadingMessage, setLoadingMessage } = useIsLoading();
-
   return (
     <>
       <ScrollLock isActive={isVisible}>
@@ -25,7 +20,7 @@ const Overlay = ({ onClick, isVisible, modal }: Props) => {
           })}
         >
           {!!modal && (
-            <div className="bg-amber-400 m-auto fixed top-1/2 left-1/2 centered p-6 rounded-xl shadow-deep-float max-w-[95vw] max-h-[95vh] overflow-y-auto">
+            <div className="bg-amber-400 m-auto fixed top-1/2 left-1/2 centered p-6 rounded-xl shadow-deep-float max-w-[95vw]  max-h-[95vh] overflow-y-auto min-w-[95vw] sm:min-w-[600px]">
               {modal}
             </div>
           )}

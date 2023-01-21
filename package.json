@@ -12,6 +12,7 @@
     "@apollo/client": "^3.7.4",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@heroicons/react": "^2.0.13",
     "@metaplex-foundation/js": "^0.17.12",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.4",
