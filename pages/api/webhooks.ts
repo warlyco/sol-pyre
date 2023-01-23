@@ -1,6 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { executeTransaction } from "utils/transactions";
-import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  Transaction,
+} from "@solana/web3.js";
 import { RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -60,13 +66,19 @@ export default async function handler(
         0
       )
     );
+    transaction.feePayer = new PublicKey(keypair);
 
-    executeTransaction(connection, transaction, {
-      successCallback: () => {
-        console.log("burned!");
-        // send reward
-      },
-    });
+    const confirmation = await sendAndConfirmTransaction(
+      connection,
+      transaction,
+      [keypair],
+      {
+        commitment: "confirmed",
+        maxRetries: 10,
+      }
+    );
+
+    console.log("burned", confirmation);
   }
 
   if (body?.[0]) {
