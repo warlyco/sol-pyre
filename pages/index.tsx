@@ -1,3 +1,4 @@
+import { REWARD_WALLET_ADDRESS } from "constants/constants";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
@@ -9,15 +10,35 @@ import { useIsLoading } from "hooks/is-loading";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Spinner from "features/UI/spinner";
 import Image from "next/image";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  burnChecked,
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+  TokenAccountNotFoundError,
+  TokenInvalidAccountOwnerError,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import * as splToken from "@solana/spl-token";
+import {
+  PublicKey,
+  Transaction,
+  TransactionInstructionCtorFields,
+} from "@solana/web3.js";
+import { executeTransaction } from "utils/transactions";
+import { asWallet } from "utils/as-wallet";
 
 export default function Home() {
   const router = useRouter();
-  const { isLoading } = useIsLoading();
+  const { isLoading, setIsLoading } = useIsLoading();
   const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
-  const { publicKey } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
   const [collection, setCollection] = useState<any>([]);
   const [nftToBurn, setNftToBurn] = useState<any>(undefined);
+  const { publicKey, signTransaction, sendTransaction } = wallet;
 
   const fetchNFTs = useCallback(async () => {
     if (!publicKey) return;
@@ -48,9 +69,56 @@ export default function Home() {
     console.log(nftsWithMetadata);
   }, [publicKey, connection]);
 
-  const handleBurnNft = useCallback(async () => {
-    alert("BURN");
-  }, []);
+  const handleTransferNft = useCallback(async () => {
+    if (!nftToBurn?.address || !publicKey || !signTransaction) return;
+
+    const fromTokenAccountAddress = await splToken.getAssociatedTokenAddress(
+      nftToBurn?.address,
+      publicKey
+    );
+
+    const toTokenAccountAddress = await splToken.getAssociatedTokenAddress(
+      nftToBurn?.address,
+      new PublicKey(REWARD_WALLET_ADDRESS)
+    );
+
+    const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+      nftToBurn?.address,
+      new PublicKey(REWARD_WALLET_ADDRESS)
+    );
+
+    const receiverAccount = await connection.getAccountInfo(
+      associatedDestinationTokenAddr
+    );
+
+    const instructions: TransactionInstructionCtorFields[] = [];
+
+    if (!receiverAccount) {
+      instructions.push(
+        createAssociatedTokenAccountInstruction(
+          publicKey,
+          associatedDestinationTokenAddr,
+          new PublicKey(REWARD_WALLET_ADDRESS),
+          nftToBurn?.address
+        )
+      );
+    }
+
+    instructions.push(
+      createTransferInstruction(
+        fromTokenAccountAddress,
+        toTokenAccountAddress,
+        publicKey,
+        1
+      )
+    );
+
+    const latestBlockhash = await connection.getLatestBlockhash();
+    const transaction = new Transaction({ ...latestBlockhash });
+    transaction.add(...instructions);
+
+    executeTransaction(connection, asWallet(wallet), transaction, {});
+  }, [connection, nftToBurn?.address, publicKey, signTransaction, wallet]);
 
   const handleSelectNft = (nft: Nft) => {
     setNftToBurn(nft);
@@ -147,7 +215,7 @@ export default function Home() {
               </button>
               <button
                 className="text-amber-400 border-2 border-green-800 bg-green-800 p-4 py-2 rounded-xl shadow-md hover:bg-orange-600 hover:text-amber-400 text-2xl font-bold overflow-y-auto w-full"
-                onClick={handleBurnNft}
+                onClick={handleTransferNft}
               >
                 Burn
               </button>
