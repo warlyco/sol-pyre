@@ -23,5 +23,5 @@ export const MINT_WALLET_ADDRESS =
   process.env.NEXT_PUBLIC_MINT_WALLET_ADDRESS || "";
 export const REWARD_WALLET_ADDRESS =
   process.env.NEXT_PUBLIC_REWARD_WALLET_ADDRESS || "";
-export const BURN_WALLET_ADDRESS =
-  process.env.NEXT_PUBLIC_BURN_WALLET_ADDRESS || "";
+export const BURNING_WALLET_ADDRESS =
+  process.env.NEXT_PUBLIC_BURNING_WALLET_ADDRESS || "";
