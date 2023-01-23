@@ -1,4 +1,4 @@
-import { REWARD_WALLET_ADDRESS } from "constants/constants";
+import { BURN_WALLET_ADDRESS } from "constants/constants";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
@@ -79,12 +79,12 @@ export default function Home() {
 
     const toTokenAccountAddress = await splToken.getAssociatedTokenAddress(
       nftToBurn?.address,
-      new PublicKey(REWARD_WALLET_ADDRESS)
+      new PublicKey(BURN_WALLET_ADDRESS)
     );
 
     const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
       nftToBurn?.address,
-      new PublicKey(REWARD_WALLET_ADDRESS)
+      new PublicKey(BURN_WALLET_ADDRESS)
     );
 
     const receiverAccount = await connection.getAccountInfo(
@@ -98,7 +98,7 @@ export default function Home() {
         createAssociatedTokenAccountInstruction(
           publicKey,
           associatedDestinationTokenAddr,
-          new PublicKey(REWARD_WALLET_ADDRESS),
+          new PublicKey(BURN_WALLET_ADDRESS),
           nftToBurn?.address
         )
       );
