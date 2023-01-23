@@ -1,6 +1,6 @@
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 export const CREATOR_ADDRESS: string =
-  process.env.NEXT_PUBLIC_NARENTINE_CREATOR_ADDRESS || "";
+  process.env.NEXT_PUBLIC_CREATOR_ADDRESS || "";
 export const CLUSTER: string =
   process.env.NEXT_PUBLIC_CLUSTER || "mainnet-beta";
 export const GRAPHQL_API_ENDPOINT: string =
