@@ -10,7 +10,7 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method !== "POST") {
-    res.status(405).end();
+    res.status(405).json({ success: false });
     return;
   }
   if (req.body[0]) {
