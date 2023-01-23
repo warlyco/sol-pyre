@@ -25,7 +25,6 @@ import { executeTransaction } from "utils/transactions";
 import { asWallet } from "utils/as-wallet";
 
 export default function Home() {
-  const router = useRouter();
   const { isLoading, setIsLoading } = useIsLoading();
   const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
   const wallet = useWallet();
@@ -111,7 +110,7 @@ export default function Home() {
     const transaction = new Transaction({ ...latestBlockhash });
     transaction.add(...instructions);
 
-    executeTransaction(connection, asWallet(wallet), transaction, {});
+    executeTransaction(connection, transaction, {}, asWallet(wallet));
   }, [connection, nftToBurn?.address, publicKey, signTransaction, wallet]);
 
   const handleSelectNft = (nft: Nft) => {

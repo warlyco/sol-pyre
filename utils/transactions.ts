@@ -11,7 +11,6 @@ import { sendAndConfirmRawTransaction } from "@solana/web3.js";
 
 export const executeTransaction = async (
   connection: Connection,
-  wallet: Wallet,
   transaction: Transaction,
   config: {
     silent?: boolean;
@@ -23,14 +22,18 @@ export const executeTransaction = async (
       description?: string;
     };
     callback?: () => void;
-  }
+    successCallback?: () => void;
+  },
+  wallet?: Wallet
 ): Promise<string> => {
   let txid = "";
   try {
-    transaction.feePayer = wallet.publicKey;
+    if (wallet) {
+      transaction.feePayer = wallet.publicKey;
+      await wallet.signTransaction(transaction);
+    }
     const latestBlockHash = await connection.getLatestBlockhash();
 
-    await wallet.signTransaction(transaction);
     const signature = await connection.sendRawTransaction(
       transaction.serialize()
     );
@@ -44,6 +47,7 @@ export const executeTransaction = async (
     const result = await connection.confirmTransaction(confirmStrategy);
 
     console.log("Successful tx", result);
+    config.successCallback && config.successCallback();
   } catch (e) {
     console.log("Failed transaction: ", e, (e as SendTransactionError).logs);
     console.log(e);

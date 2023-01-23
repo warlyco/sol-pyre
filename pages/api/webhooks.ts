@@ -1,11 +1,21 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { executeTransaction } from "utils/transactions";
+import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { RPC_ENDPOINT } from "constants/constants";
+import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { Metaplex } from "@metaplex-foundation/js";
+import {
+  createBurnCheckedInstruction,
+  getAssociatedTokenAddress,
+} from "@solana/spl-token";
+import { asWallet } from "utils/as-wallet";
 
 type Data = {
   success: boolean;
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -15,21 +25,54 @@ export default function handler(
     res.status(405).json({ success: false });
     return;
   }
+
   const { body } = req;
-  if (!body) {
+
+  if (!body || !process.env.PRIVATE_KEY) {
     res.status(400).json({ success: false });
     return;
   }
 
+  const connection = new Connection(RPC_ENDPOINT);
+  const keypair = Keypair.fromSecretKey(base58.decode(process.env.PRIVATE_KEY));
+
   if (body[0]?.type === "TRANSFER") {
     console.log("transfer");
-    const tx = body[0].nativeTransfers.find((x: any) => x.fromUserAccount);
-    console.log("tx", tx);
     // handle burn and reward
+    const { tokenTransfers } = body[0];
+    const mint = tokenTransfers[0]?.mint;
+    const toTokenAccount = tokenTransfers[0]?.toTokenAccount;
+    if (!mint) {
+      res.status(400).json({ success: false });
+      return;
+    }
+    console.log("burning mint:", mint);
+
+    const latestBlockhash = await connection.getLatestBlockhash();
+    const transaction = new Transaction({ ...latestBlockhash });
+
+    transaction.add(
+      createBurnCheckedInstruction(
+        toTokenAccount,
+        mint,
+        new PublicKey(keypair),
+        1,
+        0
+      )
+    );
+
+    executeTransaction(connection, transaction, {
+      successCallback: () => {
+        console.log("burned!");
+        // send reward
+      },
+    });
   }
 
   if (body?.[0]) {
     console.log("body.0", body[0]);
+    const tx = body[0].nativeTransfers.find((x: any) => x.fromUserAccount);
+    console.log("tx", tx);
   } else if (body) {
     console.log("body", body);
   }
