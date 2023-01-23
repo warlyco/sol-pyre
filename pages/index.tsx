@@ -1,4 +1,4 @@
-import { BURN_WALLET_ADDRESS } from "constants/constants";
+import { BURNING_WALLET_ADDRESS } from "constants/constants";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
@@ -11,15 +11,9 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Spinner from "features/UI/spinner";
 import Image from "next/image";
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  burnChecked,
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
-  getOrCreateAssociatedTokenAccount,
-  TokenAccountNotFoundError,
-  TokenInvalidAccountOwnerError,
-  TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import * as splToken from "@solana/spl-token";
 import {
@@ -79,12 +73,12 @@ export default function Home() {
 
     const toTokenAccountAddress = await splToken.getAssociatedTokenAddress(
       nftToBurn?.address,
-      new PublicKey(BURN_WALLET_ADDRESS)
+      new PublicKey(BURNING_WALLET_ADDRESS)
     );
 
     const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
       nftToBurn?.address,
-      new PublicKey(BURN_WALLET_ADDRESS)
+      new PublicKey(BURNING_WALLET_ADDRESS)
     );
 
     const receiverAccount = await connection.getAccountInfo(
@@ -98,7 +92,7 @@ export default function Home() {
         createAssociatedTokenAccountInstruction(
           publicKey,
           associatedDestinationTokenAddr,
-          new PublicKey(BURN_WALLET_ADDRESS),
+          new PublicKey(BURNING_WALLET_ADDRESS),
           nftToBurn?.address
         )
       );
