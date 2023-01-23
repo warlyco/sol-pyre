@@ -192,7 +192,7 @@ export default function Home() {
               )
             }
           >
-            Select Narentine
+            Select Sacrifice
           </button>
         )}
         {!!nftToBurn && (
