@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-  name: string;
+  success: boolean;
 };
 
 export default function handler(
@@ -14,7 +14,7 @@ export default function handler(
     return;
   }
   if (req.body[0]) {
-    console.log(req.body[0]);
+    console.log("body", req.body[0]);
   }
-  res.status(200);
+  res.status(200).json({ success: true });
 }
