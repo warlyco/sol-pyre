@@ -59,8 +59,8 @@ export default async function handler(
 
     transaction.add(
       createBurnCheckedInstruction(
-        toTokenAccount,
         mint,
+        toTokenAccount,
         new PublicKey(keypair),
         1,
         0
@@ -74,7 +74,7 @@ export default async function handler(
       [keypair],
       {
         commitment: "confirmed",
-        maxRetries: 10,
+        maxRetries: 2,
       }
     );
 
