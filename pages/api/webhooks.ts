@@ -10,7 +10,10 @@ import {
 import { RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createBurnCheckedInstruction } from "@solana/spl-token";
+import {
+  createBurnCheckedInstruction,
+  getAssociatedTokenAddress,
+} from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
 type Data = {
@@ -44,7 +47,12 @@ export default async function handler(
     // handle burn and reward
     const { tokenTransfers } = body[0];
     const mint = tokenTransfers[0]?.mint;
-    const toTokenAccount = tokenTransfers[0]?.toTokenAccount;
+
+    const toTokenAccountAddress = await getAssociatedTokenAddress(
+      mint,
+      publicKey
+    );
+
     if (!mint) {
       res.status(400).json({ success: false });
       return;
@@ -57,13 +65,13 @@ export default async function handler(
 
       console.log({
         mint,
-        toTokenAccount: toTokenAccount,
+        toTokenAccount: toTokenAccountAddress,
         publicKey,
       });
 
       transaction.add(
         createBurnCheckedInstruction(
-          new PublicKey(toTokenAccount), // PublicKey of Owner's Associated Token Account
+          new PublicKey(toTokenAccountAddress), // PublicKey of Owner's Associated Token Account
           new PublicKey(mint), // Public Key of the Token Mint Address
           publicKey, // Public Key of Owner's Wallet
           1,
