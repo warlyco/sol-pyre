@@ -74,7 +74,7 @@ export default async function handler(
       transaction.add(
         createBurnCheckedInstruction(
           new PublicKey(mint),
-          new PublicKey(toTokenAccount),
+          publicKey,
           publicKey,
           1,
           0
