@@ -122,8 +122,9 @@ export default async function handler(
 
       const { address: mintAddress } = nftMetasFromMetaplex[0];
 
-      console.log("first nft mint", mintAddress);
-      console.log("first nft", nftMetasFromMetaplex[0]);
+      console.log("tokenTransfers[0]", tokenTransfers[0]);
+      // console.log("first nft mint", mintAddress);
+      // console.log("first nft", nftMetasFromMetaplex[0]);
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         mintAddress,
