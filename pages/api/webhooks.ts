@@ -1,5 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { executeTransaction } from "utils/transactions";
 import {
   Connection,
   Keypair,
@@ -8,15 +6,15 @@ import {
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
-import { REWARD_TOKEN_MINT_ADDRESS, RPC_ENDPOINT } from "constants/constants";
+import { RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createAssociatedTokenAccountInstruction,
+  createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import { asWallet } from "utils/as-wallet";
 
 type Data = {
   success: boolean;
@@ -24,8 +22,7 @@ type Data = {
   rewardTxSignature?: string;
 };
 
-import { JsonMetadata, Metaplex } from "@metaplex-foundation/js";
-import { Metadata } from "@metaplex-foundation/mpl-token-metadata";
+import { Metaplex } from "@metaplex-foundation/js";
 
 export default async function handler(
   req: NextApiRequest,
@@ -61,18 +58,14 @@ export default async function handler(
   let burnTxSignature;
   let rewardTxSignature;
 
-  console.log("toTokenAccount", body[0]?.tokenTransfers[0].toUserAccount);
-
   if (
     body[0]?.type === "TRANSFER" &&
     body[0]?.tokenTransfers[0].toUserAccount === firePublicKey.toString()
   ) {
-    console.log("transfer");
     // handle burn and reward
     const { tokenTransfers } = body[0];
     const mint = tokenTransfers[0]?.mint;
     const tokenAccountAddress = tokenTransfers[0]?.toTokenAccount;
-    const toTokenAccountAddress = tokenTransfers[0]?.fromTokenAccount;
     const metaplex = Metaplex.make(connection);
 
     if (!mint) {
@@ -82,38 +75,32 @@ export default async function handler(
     console.log("burning mint:", mint);
 
     try {
-      // const latestBlockhash = await connection.getLatestBlockhash();
-      // const transaction = new Transaction({ ...latestBlockhash });
+      const latestBlockhash = await connection.getLatestBlockhash();
+      const transaction = new Transaction({ ...latestBlockhash });
 
-      // console.log({
-      //   mint,
-      //   tokenAccountAddress,
-      //   firePublicKey,
-      // });
+      transaction.add(
+        createBurnCheckedInstruction(
+          new PublicKey(tokenAccountAddress),
+          new PublicKey(mint),
+          firePublicKey,
+          1,
+          0
+        )
+      );
 
-      // transaction.add(
-      //   createBurnCheckedInstruction(
-      //     new PublicKey(tokenAccountAddress),
-      //     new PublicKey(mint),
-      //     firePublicKey,
-      //     1,
-      //     0
-      //   )
-      // );
+      transaction.feePayer = firePublicKey;
 
-      // transaction.feePayer = firePublicKey;
+      burnTxSignature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [fireKeypair],
+        {
+          commitment: "confirmed",
+          maxRetries: 2,
+        }
+      );
 
-      // burnTxSignature = await sendAndConfirmTransaction(
-      //   connection,
-      //   transaction,
-      //   [fireKeypair],
-      //   {
-      //     commitment: "confirmed",
-      //     maxRetries: 2,
-      //   }
-      // );
-
-      // console.log("burned", burnTxSignature);
+      console.log("burned", burnTxSignature);
 
       const nftMetasFromMetaplex = await metaplex
         .nfts()
@@ -121,43 +108,25 @@ export default async function handler(
 
       // @ts-ignore
       const rewardMintAddress: PublicKey = nftMetasFromMetaplex[0].mintAddress;
-      console.log("first nft", nftMetasFromMetaplex[0]);
-      console.log("first nft mintAddress", rewardMintAddress);
-      console.log(Object.keys(nftMetasFromMetaplex[0]));
-
-      console.log("sending reward", rewardMintAddress);
-
-      console.log("tokenTransfers[0]", tokenTransfers[0]);
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         rewardPublicKey
       );
 
-      console.log("fromTokenAccountAddress", fromTokenAccountAddress);
-
       const toTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
-
-      console.log("toTokenAccountAddress", toTokenAccountAddress);
 
       const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
         rewardMintAddress,
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
-      console.log(
-        "associatedDestinationTokenAddr",
-        associatedDestinationTokenAddr
-      );
-
       const receiverAccount = await connection.getAccountInfo(
         associatedDestinationTokenAddr
       );
-
-      console.log("receiverAccount", receiverAccount);
 
       const latestBlockhash2 = await connection.getLatestBlockhash();
       const rewardTransaction = new Transaction({ ...latestBlockhash2 });
@@ -202,12 +171,5 @@ export default async function handler(
     }
   }
 
-  if (body?.[0]) {
-    // console.log("body.0", body[0]);
-    const tx = body[0].nativeTransfers.find((x: any) => x.fromUserAccount);
-    console.log("tx", tx);
-  } else if (body) {
-    console.log("body", body);
-  }
   res.status(200).json({ success: true, burnTxSignature, rewardTxSignature });
 }
