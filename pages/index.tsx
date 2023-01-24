@@ -35,6 +35,7 @@ export default function Home() {
 
   const fetchNFTs = useCallback(async () => {
     if (!publicKey) return;
+    setIsLoading(true);
     const metaplex = Metaplex.make(connection);
     const nftMetasFromMetaplex = await metaplex
       .nfts()
@@ -47,7 +48,10 @@ export default function Home() {
         return creators?.[0]?.address?.toString() === CREATOR_ADDRESS;
       }
     );
-    if (!nftCollection.length) return;
+    if (!nftCollection.length) {
+      setIsLoading(false);
+      return;
+    }
 
     let nftsWithMetadata: any = [];
 
@@ -58,12 +62,12 @@ export default function Home() {
     }
 
     setCollection(nftsWithMetadata);
-
-    console.log(nftsWithMetadata);
-  }, [publicKey, connection]);
+    setIsLoading(false);
+  }, [publicKey, setIsLoading, connection]);
 
   const handleTransferNft = useCallback(async () => {
     if (!nftToBurn?.address || !publicKey || !signTransaction) return;
+    setIsLoading(true);
 
     const fromTokenAccountAddress = await splToken.getAssociatedTokenAddress(
       nftToBurn?.address,
@@ -110,8 +114,22 @@ export default function Home() {
     const transaction = new Transaction({ ...latestBlockhash });
     transaction.add(...instructions);
 
-    executeTransaction(connection, transaction, {}, asWallet(wallet));
-  }, [connection, nftToBurn?.address, publicKey, signTransaction, wallet]);
+    executeTransaction(
+      connection,
+      transaction,
+      {
+        callback: () => setIsLoading(false),
+      },
+      asWallet(wallet)
+    );
+  }, [
+    connection,
+    nftToBurn?.address,
+    publicKey,
+    setIsLoading,
+    signTransaction,
+    wallet,
+  ]);
 
   const handleSelectNft = (nft: Nft) => {
     setNftToBurn(nft);
@@ -151,7 +169,7 @@ export default function Home() {
       </Head>
 
       <div>
-        {!collection.length && !nftToBurn && <Spinner />}
+        {isLoading && <Spinner />}
         {!!collection.length && !nftToBurn && (
           <button
             className="text-green-800 border-2 border-amber-400 hover: bg-amber-400 p-4 rounded-xl shadow-deep hover:shadow-deep-float hover:bg-green-800 hover:text-amber-400 text-2xl font-bold overflow-y-auto"
