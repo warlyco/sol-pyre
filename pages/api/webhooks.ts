@@ -16,7 +16,6 @@ import {
   createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
-  TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
@@ -118,7 +117,10 @@ export default async function handler(
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
 
-      const { address: mintAddress } = nftMetasFromMetaplex[0];
+      // const { address: mintAddress } = nftMetasFromMetaplex[0];
+      const mintAddress = new PublicKey(
+        "13Z4WPRK8QjmGsBYs2JD5amuJJZyMeBVB6fBGGk8XbHK"
+      );
 
       console.log("tokenTransfers[0]", tokenTransfers[0]);
       // console.log("first nft mint", mintAddress);
@@ -170,20 +172,28 @@ export default async function handler(
         );
       }
 
-      // instructions.push(
-      //   createTransferInstruction(
-      //     fromTokenAccountAddress,
-      //     toTokenAccountAddress,
-      //     rewardPublicKey,
-      //     1,
-      //     [rewardPublicKey],
-      //     TOKEN_2022_PROGRAM_ID
-      //   )
-      // );
+      instructions.push(
+        createTransferInstruction(
+          fromTokenAccountAddress,
+          toTokenAccountAddress,
+          rewardPublicKey,
+          1
+        )
+      );
 
       rewardTransaction.add(...instructions);
 
-      executeTransaction(connection, rewardTransaction, {});
+      rewardTxSignature = await sendAndConfirmTransaction(
+        connection,
+        rewardTransaction,
+        [rewardKeypair],
+        {
+          commitment: "confirmed",
+          maxRetries: 2,
+        }
+      );
+
+      console.log("rewarded", rewardTxSignature);
     } catch (error) {
       console.log("error", error);
     }
