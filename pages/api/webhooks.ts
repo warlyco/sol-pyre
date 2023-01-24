@@ -6,11 +6,13 @@ import {
   PublicKey,
   sendAndConfirmTransaction,
   Transaction,
+  TransactionInstructionCtorFields,
 } from "@solana/web3.js";
 import { REWARD_TOKEN_MINT_ADDRESS, RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
+  createAssociatedTokenAccountInstruction,
   createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
@@ -118,12 +120,46 @@ export default async function handler(
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
 
-      console.log("first nft mint", nftMetasFromMetaplex[0].address);
+      const { address: mintAddress } = nftMetasFromMetaplex[0];
+
+      console.log("first nft mint", mintAddress);
       console.log("first nft", nftMetasFromMetaplex[0]);
+
+      const fromTokenAccountAddress = await getAssociatedTokenAddress(
+        mintAddress,
+        rewardPublicKey
+      );
+
+      const toTokenAccountAddress = await getAssociatedTokenAddress(
+        mintAddress,
+        new PublicKey(tokenTransfers[0]?.fromTokenAccount)
+      );
+
+      const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+        mintAddress,
+        new PublicKey(tokenTransfers[0]?.fromTokenAccount)
+      );
+
+      const receiverAccount = await connection.getAccountInfo(
+        associatedDestinationTokenAddr
+      );
+
+      const instructions: TransactionInstructionCtorFields[] = [];
+
+      if (!receiverAccount) {
+        instructions.push(
+          createAssociatedTokenAccountInstruction(
+            rewardPublicKey,
+            associatedDestinationTokenAddr,
+            new PublicKey(tokenTransfers[0]?.fromTokenAccount),
+            mintAddress
+          )
+        );
+      }
 
       rewardTransaction.add(
         createTransferInstruction(
-          nftMetasFromMetaplex[0].address,
+          fromTokenAccountAddress,
           toTokenAccountAddress,
           rewardPublicKey,
           1
