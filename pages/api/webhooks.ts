@@ -13,7 +13,6 @@ import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createAssociatedTokenAccountInstruction,
-  createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
@@ -62,7 +61,12 @@ export default async function handler(
   let burnTxSignature;
   let rewardTxSignature;
 
-  if (body[0]?.type === "TRANSFER") {
+  console.log("toTokenAccount", body[0]?.tokenTransfers[0].toUserAccount);
+
+  if (
+    body[0]?.type === "TRANSFER" &&
+    body[0]?.tokenTransfers[0].toUserAccount === firePublicKey.toString()
+  ) {
     console.log("transfer");
     // handle burn and reward
     const { tokenTransfers } = body[0];
@@ -111,37 +115,37 @@ export default async function handler(
 
       // console.log("burned", burnTxSignature);
 
-      console.log("sending reward");
-
       const nftMetasFromMetaplex = await metaplex
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
 
       // const { address: mintAddress } = nftMetasFromMetaplex[0];
-      const mintAddress = new PublicKey(
+      const rewardMintAddress = new PublicKey(
         "13Z4WPRK8QjmGsBYs2JD5amuJJZyMeBVB6fBGGk8XbHK"
       );
+
+      console.log("sending reward", rewardMintAddress);
 
       console.log("tokenTransfers[0]", tokenTransfers[0]);
       // console.log("first nft mint", mintAddress);
       // console.log("first nft", nftMetasFromMetaplex[0]);
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
-        mintAddress,
+        rewardMintAddress,
         rewardPublicKey
       );
 
       console.log("fromTokenAccountAddress", fromTokenAccountAddress);
 
       const toTokenAccountAddress = await getAssociatedTokenAddress(
-        mintAddress,
+        rewardMintAddress,
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
       console.log("toTokenAccountAddress", toTokenAccountAddress);
 
       const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-        mintAddress,
+        rewardMintAddress,
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
@@ -167,7 +171,7 @@ export default async function handler(
             rewardPublicKey,
             associatedDestinationTokenAddr,
             new PublicKey(tokenTransfers[0]?.fromUserAccount),
-            mintAddress
+            rewardMintAddress
           )
         );
       }
