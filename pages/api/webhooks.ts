@@ -49,7 +49,7 @@ export default async function handler(
     const mint = tokenTransfers[0]?.mint;
 
     const toTokenAccountAddress = await getAssociatedTokenAddress(
-      mint,
+      new PublicKey(mint),
       publicKey
     );
 
