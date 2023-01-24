@@ -78,7 +78,8 @@ export default async function handler(
           0
         )
       );
-      transaction.feePayer = new PublicKey(keypair);
+
+      transaction.feePayer = publicKey;
 
       const confirmation = await sendAndConfirmTransaction(
         connection,
