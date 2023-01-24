@@ -60,8 +60,9 @@ export default async function handler(
       const transaction = new Transaction({ ...latestBlockhash });
 
       console.log({
+        mint,
         toTokenAccount: toTokenAccount,
-        keypair: keypair.toString(),
+        publicKey,
       });
 
       transaction.add(
