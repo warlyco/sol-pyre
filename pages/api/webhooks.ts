@@ -113,9 +113,6 @@ export default async function handler(
 
       console.log("sending reward");
 
-      const latestBlockhash2 = await connection.getLatestBlockhash();
-      const rewardTransaction = new Transaction({ ...latestBlockhash2 });
-
       const nftMetasFromMetaplex = await metaplex
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
@@ -156,6 +153,9 @@ export default async function handler(
 
       console.log("receiverAccount", receiverAccount);
 
+      const latestBlockhash2 = await connection.getLatestBlockhash();
+      const rewardTransaction = new Transaction({ ...latestBlockhash2 });
+
       const instructions: TransactionInstructionCtorFields[] = [];
 
       if (!receiverAccount) {
@@ -169,7 +169,9 @@ export default async function handler(
         );
       }
 
-      rewardTransaction.add(
+      console.log("receiverAccount try 2", receiverAccount);
+
+      instructions.push(
         createTransferInstruction(
           fromTokenAccountAddress,
           toTokenAccountAddress,
@@ -177,6 +179,8 @@ export default async function handler(
           1
         )
       );
+
+      rewardTransaction.add(...instructions);
 
       rewardTxSignature = await sendAndConfirmTransaction(
         connection,
