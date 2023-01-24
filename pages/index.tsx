@@ -174,8 +174,10 @@ export default function Home() {
         {isLoading && <Spinner />}
         {!isLoading && !collection.length && (
           <div className="flex flex-col items-center">
-            <h1 className="text-4xl font-bold text-amber-400">
-              You do not have any NFTs in this burn campaing
+            <h1 className="text-3xl text-amber-400 max-w-sm text-center">
+              {!!publicKey
+                ? "You do not have any NFTs in this burn campaign"
+                : "Please connect your wallet"}
             </h1>
           </div>
         )}
