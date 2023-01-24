@@ -119,16 +119,14 @@ export default async function handler(
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
 
-      // const { address: mintAddress } = nftMetasFromMetaplex[0];
       const rewardMintAddress = new PublicKey(
         "13Z4WPRK8QjmGsBYs2JD5amuJJZyMeBVB6fBGGk8XbHK"
       );
+      console.log("first nft", nftMetasFromMetaplex[0]);
 
       console.log("sending reward", rewardMintAddress);
 
       console.log("tokenTransfers[0]", tokenTransfers[0]);
-      // console.log("first nft mint", mintAddress);
-      // console.log("first nft", nftMetasFromMetaplex[0]);
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
