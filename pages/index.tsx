@@ -33,6 +33,8 @@ export default function Home() {
   const [nftToBurn, setNftToBurn] = useState<any>(undefined);
   const { publicKey, signTransaction, sendTransaction } = wallet;
 
+  const [hasBeenFetched, setHasBeenFetched] = useState(false);
+
   const fetchNFTs = useCallback(async () => {
     if (!publicKey) return;
     setIsLoading(true);
@@ -41,8 +43,6 @@ export default function Home() {
       .nfts()
       .findAllByOwner({ owner: publicKey });
 
-    console.log(nftMetasFromMetaplex);
-
     const nftCollection = nftMetasFromMetaplex.filter(
       ({ creators }: { creators: any }) => {
         return creators?.[0]?.address?.toString() === CREATOR_ADDRESS;
@@ -50,6 +50,7 @@ export default function Home() {
     );
     if (!nftCollection.length) {
       setIsLoading(false);
+      setHasBeenFetched(true);
       return;
     }
 
@@ -62,6 +63,7 @@ export default function Home() {
     }
 
     setCollection(nftsWithMetadata);
+    setHasBeenFetched(true);
     setIsLoading(false);
   }, [publicKey, setIsLoading, connection]);
 
@@ -137,9 +139,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (collection.length) return;
+    if (collection.length || hasBeenFetched) return;
     fetchNFTs();
-  }, [collection.length, fetchNFTs]);
+  }, [collection.length, fetchNFTs, hasBeenFetched]);
 
   return (
     <div className="flex justify-center items-center bg-green-800 min-h-screen relative overflow-hidden">
@@ -170,7 +172,14 @@ export default function Home() {
 
       <div>
         {isLoading && <Spinner />}
-        {!!collection.length && !nftToBurn && (
+        {!isLoading && !collection.length && (
+          <div className="flex flex-col items-center">
+            <h1 className="text-4xl font-bold text-amber-400">
+              You do not have any NFTs in this burn campaing
+            </h1>
+          </div>
+        )}
+        {!isLoading && !!collection.length && !nftToBurn && (
           <button
             className="text-green-800 border-2 border-amber-400 hover: bg-amber-400 p-4 rounded-xl shadow-deep hover:shadow-deep-float hover:bg-green-800 hover:text-amber-400 text-2xl font-bold overflow-y-auto"
             onClick={() =>
