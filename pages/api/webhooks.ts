@@ -47,6 +47,7 @@ export default async function handler(
     // handle burn and reward
     const { tokenTransfers } = body[0];
     const mint = tokenTransfers[0]?.mint;
+    const toTokenAccount = tokenTransfers[0]?.toTokenAccount;
 
     const tokenAccountAddress = await getAssociatedTokenAddress(
       new PublicKey(mint),
@@ -65,14 +66,15 @@ export default async function handler(
 
       console.log({
         mint,
-        toTokenAccount: tokenAccountAddress,
+        toTokenAccount,
+        getAssociatedTokenAddress: tokenAccountAddress.toString(),
         publicKey,
       });
 
       transaction.add(
         createBurnCheckedInstruction(
           new PublicKey(mint),
-          tokenAccountAddress,
+          new PublicKey(toTokenAccount),
           publicKey,
           1,
           0
