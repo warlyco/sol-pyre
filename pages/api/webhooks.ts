@@ -7,7 +7,7 @@ import {
   sendAndConfirmTransaction,
   Transaction,
 } from "@solana/web3.js";
-import { RPC_ENDPOINT } from "constants/constants";
+import { REWARD_TOKEN_MINT_ADDRESS, RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
@@ -22,6 +22,8 @@ type Data = {
   burnTxSignature?: string;
   rewardTxSignature?: string;
 };
+
+import { Metaplex } from "@metaplex-foundation/js";
 
 export default async function handler(
   req: NextApiRequest,
@@ -64,6 +66,7 @@ export default async function handler(
     const mint = tokenTransfers[0]?.mint;
     const tokenAccountAddress = tokenTransfers[0]?.toTokenAccount;
     const toTokenAccountAddress = tokenTransfers[0]?.fromTokenAccount;
+    const metaplex = Metaplex.make(connection);
 
     if (!mint) {
       res.status(400).json({ success: false });
@@ -110,9 +113,15 @@ export default async function handler(
       const latestBlockhash2 = await connection.getLatestBlockhash();
       const rewardTransaction = new Transaction({ ...latestBlockhash2 });
 
+      const nftMetasFromMetaplex = await metaplex
+        .nfts()
+        .findAllByOwner({ owner: rewardPublicKey });
+
+      console.log("first nft", nftMetasFromMetaplex[0]);
+
       rewardTransaction.add(
         createTransferInstruction(
-          tokenAccountAddress,
+          nftMetasFromMetaplex[0].address,
           toTokenAccountAddress,
           rewardPublicKey,
           1
