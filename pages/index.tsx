@@ -227,7 +227,7 @@ export default function Home() {
             Select Sacrifice
           </button>
         )}
-        {!!nftToBurn && (
+        {!isLoading && !!nftToBurn && (
           <div className="p-4 bg-amber-400 rounded-2xl border-24 border-green-800 shadow-deep hover:shadow-deep-float">
             <Image
               className="rounded-xl "
