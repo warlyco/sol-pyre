@@ -12,12 +12,15 @@ import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createBurnCheckedInstruction,
+  createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
 type Data = {
   success: boolean;
+  burnTxSignature?: string;
+  rewardTxSignature?: string;
 };
 
 export default async function handler(
@@ -33,26 +36,34 @@ export default async function handler(
 
   const { body } = req;
 
-  if (!body || !process.env.PRIVATE_KEY) {
+  if (
+    !body ||
+    !process.env.FIRE_PRIVATE_KEY ||
+    !process.env.REWARD_PRIVATE_KEY
+  ) {
     res.status(400).json({ success: false });
     return;
   }
 
   const connection = new Connection(RPC_ENDPOINT);
-  const keypair = Keypair.fromSecretKey(base58.decode(process.env.PRIVATE_KEY));
-  const publicKey = new PublicKey(keypair.publicKey.toString());
+  const fireKeypair = Keypair.fromSecretKey(
+    base58.decode(process.env.FIRE_PRIVATE_KEY)
+  );
+  const rewardKeypair = Keypair.fromSecretKey(
+    base58.decode(process.env.REWARD_PRIVATE_KEY)
+  );
+  const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
+  const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
+  let burnTxSignature;
+  let rewardTxSignature;
 
   if (body[0]?.type === "TRANSFER") {
     console.log("transfer");
     // handle burn and reward
     const { tokenTransfers } = body[0];
     const mint = tokenTransfers[0]?.mint;
-    const toTokenAccount = tokenTransfers[0]?.toTokenAccount;
-
-    const tokenAccountAddress = await getAssociatedTokenAddress(
-      new PublicKey(mint),
-      publicKey
-    );
+    const tokenAccountAddress = tokenTransfers[0]?.toTokenAccount;
+    const toTokenAccountAddress = tokenTransfers[0]?.fromTokenAccount;
 
     if (!mint) {
       res.status(400).json({ success: false });
@@ -66,34 +77,59 @@ export default async function handler(
 
       console.log({
         mint,
-        toTokenAccount,
-        getAssociatedTokenAddress: tokenAccountAddress.toString(),
-        publicKey,
+        tokenAccountAddress,
+        firePublicKey,
       });
 
       transaction.add(
         createBurnCheckedInstruction(
-          new PublicKey(toTokenAccount),
+          new PublicKey(tokenAccountAddress),
           new PublicKey(mint),
-          publicKey,
+          firePublicKey,
           1,
           0
         )
       );
 
-      transaction.feePayer = publicKey;
+      transaction.feePayer = firePublicKey;
 
-      const confirmation = await sendAndConfirmTransaction(
+      burnTxSignature = await sendAndConfirmTransaction(
         connection,
         transaction,
-        [keypair],
+        [fireKeypair],
         {
           commitment: "confirmed",
           maxRetries: 2,
         }
       );
 
-      console.log("burned", confirmation);
+      console.log("burned", burnTxSignature);
+
+      console.log("sending reward");
+
+      const latestBlockhash2 = await connection.getLatestBlockhash();
+      const rewardTransaction = new Transaction({ ...latestBlockhash2 });
+
+      rewardTransaction.add(
+        createTransferInstruction(
+          tokenAccountAddress,
+          toTokenAccountAddress,
+          rewardPublicKey,
+          1
+        )
+      );
+
+      rewardTxSignature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [rewardKeypair],
+        {
+          commitment: "confirmed",
+          maxRetries: 2,
+        }
+      );
+
+      console.log("rewarded", rewardTxSignature);
     } catch (error) {
       console.log("error", error);
     }
@@ -106,5 +142,5 @@ export default async function handler(
   } else if (body) {
     console.log("body", body);
   }
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true, burnTxSignature, rewardTxSignature });
 }
