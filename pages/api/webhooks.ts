@@ -170,16 +170,16 @@ export default async function handler(
         );
       }
 
-      instructions.push(
-        createTransferInstruction(
-          fromTokenAccountAddress,
-          toTokenAccountAddress,
-          rewardPublicKey,
-          1,
-          [rewardPublicKey],
-          TOKEN_2022_PROGRAM_ID
-        )
-      );
+      // instructions.push(
+      //   createTransferInstruction(
+      //     fromTokenAccountAddress,
+      //     toTokenAccountAddress,
+      //     rewardPublicKey,
+      //     1,
+      //     [rewardPublicKey],
+      //     TOKEN_2022_PROGRAM_ID
+      //   )
+      // );
 
       rewardTransaction.add(...instructions);
 
