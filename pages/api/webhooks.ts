@@ -12,11 +12,14 @@ import { REWARD_TOKEN_MINT_ADDRESS, RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
   TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
@@ -159,27 +162,35 @@ export default async function handler(
 
       const instructions: TransactionInstructionCtorFields[] = [];
 
-      if (!receiverAccount) {
-        instructions.push(
-          createAssociatedTokenAccountInstruction(
-            rewardPublicKey,
-            associatedDestinationTokenAddr,
-            new PublicKey(tokenTransfers[0]?.fromUserAccount),
-            mintAddress
-          )
-        );
-      }
-
-      // instructions.push(
-      //   createTransferInstruction(
-      //     fromTokenAccountAddress,
-      //     toTokenAccountAddress,
-      //     rewardPublicKey,
-      //     1,
-      //     [rewardPublicKey],
-      //     TOKEN_2022_PROGRAM_ID
-      //   )
-      // );
+      // if (!receiverAccount) {
+      //   instructions.push(
+      //     createAssociatedTokenAccountInstruction(
+      //       rewardPublicKey,
+      //       associatedDestinationTokenAddr,
+      //       new PublicKey(tokenTransfers[0]?.fromUserAccount),
+      //       mintAddress
+      //     )
+      //   );
+      // }
+      const toTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        rewardKeypair,
+        mintAddress,
+        rewardPublicKey,
+        false,
+        "confirmed",
+        {},
+        TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      );
+      instructions.push(
+        createTransferInstruction(
+          fromTokenAccountAddress,
+          toTokenAccount.address,
+          rewardPublicKey,
+          1
+        )
+      );
 
       rewardTransaction.add(...instructions);
 
