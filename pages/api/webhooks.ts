@@ -183,17 +183,7 @@ export default async function handler(
 
       rewardTransaction.add(...instructions);
 
-      rewardTxSignature = await sendAndConfirmTransaction(
-        connection,
-        rewardTransaction,
-        [rewardKeypair],
-        {
-          commitment: "confirmed",
-          maxRetries: 2,
-        }
-      );
-
-      console.log("rewarded", rewardTxSignature);
+      executeTransaction(connection, rewardTransaction, {});
     } catch (error) {
       console.log("error", error);
     }
