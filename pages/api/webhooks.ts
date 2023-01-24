@@ -75,38 +75,38 @@ export default async function handler(
     console.log("burning mint:", mint);
 
     try {
-      const latestBlockhash = await connection.getLatestBlockhash();
-      const transaction = new Transaction({ ...latestBlockhash });
+      // const latestBlockhash = await connection.getLatestBlockhash();
+      // const transaction = new Transaction({ ...latestBlockhash });
 
-      console.log({
-        mint,
-        tokenAccountAddress,
-        firePublicKey,
-      });
+      // console.log({
+      //   mint,
+      //   tokenAccountAddress,
+      //   firePublicKey,
+      // });
 
-      transaction.add(
-        createBurnCheckedInstruction(
-          new PublicKey(tokenAccountAddress),
-          new PublicKey(mint),
-          firePublicKey,
-          1,
-          0
-        )
-      );
+      // transaction.add(
+      //   createBurnCheckedInstruction(
+      //     new PublicKey(tokenAccountAddress),
+      //     new PublicKey(mint),
+      //     firePublicKey,
+      //     1,
+      //     0
+      //   )
+      // );
 
-      transaction.feePayer = firePublicKey;
+      // transaction.feePayer = firePublicKey;
 
-      burnTxSignature = await sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [fireKeypair],
-        {
-          commitment: "confirmed",
-          maxRetries: 2,
-        }
-      );
+      // burnTxSignature = await sendAndConfirmTransaction(
+      //   connection,
+      //   transaction,
+      //   [fireKeypair],
+      //   {
+      //     commitment: "confirmed",
+      //     maxRetries: 2,
+      //   }
+      // );
 
-      console.log("burned", burnTxSignature);
+      // console.log("burned", burnTxSignature);
 
       console.log("sending reward");
 
@@ -130,7 +130,7 @@ export default async function handler(
 
       rewardTxSignature = await sendAndConfirmTransaction(
         connection,
-        transaction,
+        rewardTransaction,
         [rewardKeypair],
         {
           commitment: "confirmed",
