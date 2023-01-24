@@ -16,6 +16,7 @@ import {
   createBurnCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
+  TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
@@ -169,14 +170,14 @@ export default async function handler(
         );
       }
 
-      console.log("receiverAccount try 2", receiverAccount);
-
       instructions.push(
         createTransferInstruction(
           fromTokenAccountAddress,
           toTokenAccountAddress,
           rewardPublicKey,
-          1
+          1,
+          [rewardPublicKey],
+          TOKEN_2022_PROGRAM_ID
         )
       );
 
