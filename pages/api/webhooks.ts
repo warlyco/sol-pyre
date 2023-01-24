@@ -54,31 +54,35 @@ export default async function handler(
     }
     console.log("burning mint:", mint);
 
-    const latestBlockhash = await connection.getLatestBlockhash();
-    const transaction = new Transaction({ ...latestBlockhash });
+    try {
+      const latestBlockhash = await connection.getLatestBlockhash();
+      const transaction = new Transaction({ ...latestBlockhash });
 
-    transaction.add(
-      createBurnCheckedInstruction(
-        mint,
-        toTokenAccount,
-        new PublicKey(keypair),
-        1,
-        0
-      )
-    );
-    transaction.feePayer = new PublicKey(keypair);
+      transaction.add(
+        createBurnCheckedInstruction(
+          mint,
+          toTokenAccount,
+          new PublicKey(keypair),
+          1,
+          0
+        )
+      );
+      transaction.feePayer = new PublicKey(keypair);
 
-    const confirmation = await sendAndConfirmTransaction(
-      connection,
-      transaction,
-      [keypair],
-      {
-        commitment: "confirmed",
-        maxRetries: 2,
-      }
-    );
+      const confirmation = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [keypair],
+        {
+          commitment: "confirmed",
+          maxRetries: 2,
+        }
+      );
 
-    console.log("burned", confirmation);
+      console.log("burned", confirmation);
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 
   if (body?.[0]) {
