@@ -10,11 +10,7 @@ import {
 import { RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Metaplex } from "@metaplex-foundation/js";
-import {
-  createBurnCheckedInstruction,
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
+import { createBurnCheckedInstruction } from "@solana/spl-token";
 import { asWallet } from "utils/as-wallet";
 
 type Data = {
@@ -67,9 +63,9 @@ export default async function handler(
 
       transaction.add(
         createBurnCheckedInstruction(
-          new PublicKey(mint),
-          new PublicKey(toTokenAccount),
-          publicKey,
+          new PublicKey(toTokenAccount), // PublicKey of Owner's Associated Token Account
+          new PublicKey(mint), // Public Key of the Token Mint Address
+          publicKey, // Public Key of Owner's Wallet
           1,
           0
         )
