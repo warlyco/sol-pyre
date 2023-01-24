@@ -41,6 +41,7 @@ export default async function handler(
 
   const connection = new Connection(RPC_ENDPOINT);
   const keypair = Keypair.fromSecretKey(base58.decode(process.env.PRIVATE_KEY));
+  const publicKey = new PublicKey(keypair.publicKey.toString());
 
   if (body[0]?.type === "TRANSFER") {
     console.log("transfer");
@@ -67,7 +68,7 @@ export default async function handler(
         createBurnCheckedInstruction(
           new PublicKey(mint),
           new PublicKey(toTokenAccount),
-          new PublicKey(keypair),
+          publicKey,
           1,
           0
         )
