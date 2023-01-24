@@ -58,6 +58,11 @@ export default async function handler(
       const latestBlockhash = await connection.getLatestBlockhash();
       const transaction = new Transaction({ ...latestBlockhash });
 
+      console.log({
+        toTokenAccount: toTokenAccount,
+        keypair: keypair.toString(),
+      });
+
       transaction.add(
         createBurnCheckedInstruction(
           mint,
