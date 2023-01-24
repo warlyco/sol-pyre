@@ -135,14 +135,14 @@ export default async function handler(
 
       const toTokenAccountAddress = await getAssociatedTokenAddress(
         mintAddress,
-        new PublicKey(tokenTransfers[0]?.fromTokenAccount)
+        new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
       console.log("toTokenAccountAddress", toTokenAccountAddress);
 
       const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
         mintAddress,
-        new PublicKey(tokenTransfers[0]?.fromTokenAccount)
+        new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
       console.log(
@@ -163,7 +163,7 @@ export default async function handler(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
             associatedDestinationTokenAddr,
-            new PublicKey(tokenTransfers[0]?.fromTokenAccount),
+            new PublicKey(tokenTransfers[0]?.fromUserAccount),
             mintAddress
           )
         );
