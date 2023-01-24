@@ -130,19 +130,30 @@ export default async function handler(
         rewardPublicKey
       );
 
+      console.log("fromTokenAccountAddress", fromTokenAccountAddress);
+
       const toTokenAccountAddress = await getAssociatedTokenAddress(
         mintAddress,
         new PublicKey(tokenTransfers[0]?.fromTokenAccount)
       );
+
+      console.log("toTokenAccountAddress", toTokenAccountAddress);
 
       const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
         mintAddress,
         new PublicKey(tokenTransfers[0]?.fromTokenAccount)
       );
 
+      console.log(
+        "associatedDestinationTokenAddr",
+        associatedDestinationTokenAddr
+      );
+
       const receiverAccount = await connection.getAccountInfo(
         associatedDestinationTokenAddr
       );
+
+      console.log("receiverAccount", receiverAccount);
 
       const instructions: TransactionInstructionCtorFields[] = [];
 
