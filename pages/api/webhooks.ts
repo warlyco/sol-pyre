@@ -23,7 +23,8 @@ type Data = {
   rewardTxSignature?: string;
 };
 
-import { Metaplex } from "@metaplex-foundation/js";
+import { JsonMetadata, Metaplex } from "@metaplex-foundation/js";
+import { Metadata } from "@metaplex-foundation/mpl-token-metadata";
 
 export default async function handler(
   req: NextApiRequest,
@@ -117,6 +118,7 @@ export default async function handler(
         .nfts()
         .findAllByOwner({ owner: rewardPublicKey });
 
+      console.log("first nft mint", nftMetasFromMetaplex[0].address);
       console.log("first nft", nftMetasFromMetaplex[0]);
 
       rewardTransaction.add(
@@ -145,7 +147,7 @@ export default async function handler(
   }
 
   if (body?.[0]) {
-    console.log("body.0", body[0]);
+    // console.log("body.0", body[0]);
     const tx = body[0].nativeTransfers.find((x: any) => x.fromUserAccount);
     console.log("tx", tx);
   } else if (body) {
