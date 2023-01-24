@@ -65,8 +65,8 @@ export default async function handler(
 
       transaction.add(
         createBurnCheckedInstruction(
-          mint,
-          toTokenAccount,
+          new PublicKey(mint),
+          new PublicKey(toTokenAccount),
           new PublicKey(keypair),
           1,
           0
