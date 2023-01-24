@@ -48,7 +48,7 @@ export default async function handler(
     const { tokenTransfers } = body[0];
     const mint = tokenTransfers[0]?.mint;
 
-    const toTokenAccountAddress = await getAssociatedTokenAddress(
+    const tokenAccountAddress = await getAssociatedTokenAddress(
       new PublicKey(mint),
       publicKey
     );
@@ -65,15 +65,15 @@ export default async function handler(
 
       console.log({
         mint,
-        toTokenAccount: toTokenAccountAddress,
+        toTokenAccount: tokenAccountAddress,
         publicKey,
       });
 
       transaction.add(
         createBurnCheckedInstruction(
-          new PublicKey(toTokenAccountAddress), // PublicKey of Owner's Associated Token Account
-          new PublicKey(mint), // Public Key of the Token Mint Address
-          publicKey, // Public Key of Owner's Wallet
+          new PublicKey(mint),
+          tokenAccountAddress,
+          publicKey,
           1,
           0
         )
