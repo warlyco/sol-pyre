@@ -4,7 +4,6 @@ import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
 import Overlay from "features/UI/overlay";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useIsLoading } from "hooks/is-loading";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -23,6 +22,7 @@ import {
 } from "@solana/web3.js";
 import { executeTransaction } from "utils/transactions";
 import { asWallet } from "utils/as-wallet";
+import showToast from "toasts/show-toast";
 
 export default function Home() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -70,6 +70,9 @@ export default function Home() {
   const handleTransferNft = useCallback(async () => {
     if (!nftToBurn?.address || !publicKey || !signTransaction) return;
     setIsLoading(true);
+    showToast({
+      primaryMessage: "🔥 Sending your NFT to the furnace 🔥",
+    });
 
     const fromTokenAccountAddress = await splToken.getAssociatedTokenAddress(
       nftToBurn?.address,
@@ -121,6 +124,13 @@ export default function Home() {
       transaction,
       {
         callback: () => setIsLoading(false),
+        successCallback: () => {
+          showToast({
+            primaryMessage: "🔥 NFT sent to the furnace 🔥",
+            secondaryMessage: "You will receive your reward shortly!",
+          });
+          setNftToBurn(undefined);
+        },
       },
       asWallet(wallet)
     );
