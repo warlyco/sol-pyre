@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,8 +8,8 @@ body,
 #__next {
   min-height: 100vh;
   height: 100%;
-  /* font-family: "IBM Plex Sans Arabic", serif;
-  @apply text-slate-300 bg-stone-900; */
+  font-family: 'Quicksand', sans-serif;
+  @apply text-slate-300 ;
 }
 
 .wallet-adapter-button.wallet-adapter-button-trigger {
