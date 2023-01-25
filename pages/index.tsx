@@ -29,6 +29,7 @@ export default function Home() {
     <div className="flex justify-center items-center bg-stone-900 min-h-screen relative overflow-hidden">
       <Head>
         <title>SolPyre</title>
+        <meta name="description" content="solana burning services" />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -56,7 +57,11 @@ export default function Home() {
         <h1 className="text-7xl md:text-8xl mb-4 uppercase tracking-widest">
           SolPyre
         </h1>
-        <h2 className="text-xl">solana burning services</h2>
+        <h2 className="text-xl">
+          solana &nbsp;
+          <span className="text-orange-400 p-1 rounded">burning</span>
+          &nbsp; services
+        </h2>
         <div className="py-10">
           <div className="w-full border border-slate-300 opacity-20"></div>
         </div>
