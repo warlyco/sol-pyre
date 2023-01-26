@@ -13,7 +13,7 @@ export const Card = ({ project, className, children }: CardProps) => {
     <div
       className={classNames([
         className,
-        "bg-stone-900 rounded-xl shadow-deep border-2 border-orange-400 border-opacity-50 cursor-pointer hover:shadow-deep-float hover:scale-[1.02] transition-all duration-300 ease-in-out]",
+        "bg-stone-900 rounded-xl shadow-deep border-2 border-orange-400 border-opacity-50 cursor-pointer hover:shadow-deep-float hover:scale-[1.02] transition-all duration-300 ease-in-out",
       ])}
     >
       <Image

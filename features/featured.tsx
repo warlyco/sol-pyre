@@ -13,7 +13,7 @@ export const Featured = () => {
       <div className="text-center text-3xl md:text-4xl mb-16">
         Featured Burn
       </div>
-      <div className="flex max-w-5xl md:mx-auto border-2 border-orange-500 rounded-xl border-opacity-40 shadow-deep cursor-pointer hover:scale-[1.03] hover:shadow-deep-float mx-4">
+      <div className="flex max-w-5xl md:mx-auto border-2 border-orange-500 rounded-xl border-opacity-40 shadow-deep cursor-pointer hover:scale-[1.03] hover:shadow-deep-float mx-10 transition-all duration-300 ease-in-out">
         <Link className="flex flex-wrap" href="/burns/narentines">
           <div className="w-full md:w-1/3 flex flex-shrink-0 h-72 md:h-auto">
             <Image

@@ -35,10 +35,10 @@ const projects = [
 
 export const Upcoming = () => {
   return (
-    <div className="bg-stone-900 py-24 px-4 md:px-0">
+    <div className="bg-stone-900 py-24 md:px-0">
       <div className="text-center text-3xl md:text-4xl">Upcoming Burns</div>
       <div className="max-w-5xl mx-auto py-16">
-        <div className="flex flex-wrap md:-mx-8 justify-center">
+        <div className="flex flex-wrap -mx-4 justify-center">
           {projects.map((project) => (
             <div className="md:w-1/3 p-4 flex" key={project.name}>
               <BurnCard project={project}>{project?.description}</BurnCard>
