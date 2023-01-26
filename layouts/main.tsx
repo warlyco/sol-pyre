@@ -15,6 +15,16 @@ export default function MainLayout({ children }: Props) {
       <Navbar />
       <Toaster />
       <div className="mx-auto bg-stone-900">{children}</div>
+      <div className="absolute bottom-0 mx-auto">
+        <div className="text-center text-slate-300 text-xs">
+          <div className="py-2">
+            built by{" "}
+            <a href="https://twitter.com/warly_sol" className="underline">
+              @warly_sol
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
