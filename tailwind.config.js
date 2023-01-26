@@ -12,6 +12,9 @@ module.exports = {
         green: {
           800: "#69754e",
         },
+        purple: {
+          500: "#944afb",
+        },
       },
       boxShadow: {
         deep: "11px 20px 19px 0px rgba(0,0,0,0.53);",

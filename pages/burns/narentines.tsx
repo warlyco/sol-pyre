@@ -186,7 +186,7 @@ export default function Home() {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl text-amber-400 max-w-sm text-center">
               {!!publicKey
-                ? "You do not have any NFTs in this burn campaign. Contact @warly_sol on twitter for some!"
+                ? "Campaign has not started yet"
                 : "Please connect your wallet"}
             </h1>
           </div>
