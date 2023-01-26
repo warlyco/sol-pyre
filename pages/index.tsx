@@ -14,7 +14,7 @@ export default function Home() {
           <span className="text-orange-400 p-1 rounded">burning</span>
           &nbsp; services
         </h2>
-        <div className="py-10">
+        <div className="py-10 min-w-[450px]">
           <div className="w-full border border-slate-300 opacity-20"></div>
         </div>
         <div className="italic text-xs uppercase">Coming soon</div>
