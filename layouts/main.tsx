@@ -18,12 +18,12 @@ export default function MainLayout({ children }: Props) {
       <Navbar />
       <Toaster />
       <div className="mx-auto bg-stone-900">{children}</div>
-      <div className="fixed bottom-0 mx-auto">
+      <div className="fixed bottom-0 mx-auto w-full">
         <div className="flex justify-center text-slate-300 text-xs w-full">
           <div className="py-2">
             🛠️ by{" "}
             <a href="https://twitter.com/warly_sol" className="underline">
-              @warly_sol
+              warly.sol
             </a>
           </div>
         </div>
