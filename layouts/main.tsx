@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
 };
 
 export default function MainLayout({ children }: Props) {
+  const router = useRouter();
   const Navbar = dynamic(() => import("features/navbar/navbar"), {
     ssr: false,
   });
@@ -15,16 +17,6 @@ export default function MainLayout({ children }: Props) {
       <Navbar />
       <Toaster />
       {children}
-      <div className="fixed bottom-0 mx-auto w-full">
-        <div className="flex justify-center text-slate-300 text-xs w-full">
-          <div className="py-2">
-            🛠️ by{" "}
-            <a href="https://twitter.com/warly_sol" className="underline">
-              warly.sol
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

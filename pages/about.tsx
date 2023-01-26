@@ -55,6 +55,16 @@ export default function About() {
           </p>
         </div>
       </div>
+      <div className="fixed bottom-0 mx-auto w-full">
+        <div className="flex justify-center text-slate-300 w-full">
+          <div className="py-2 text-xs">
+            🛠️ by{" "}
+            <a href="https://twitter.com/warly_sol" className="underline">
+              warly.sol
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

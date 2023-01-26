@@ -35,11 +35,11 @@ const projects = [
 
 export const Upcoming = () => {
   return (
-    <div className="bg-stone-900 py-24 md:px-0">
+    <div className="bg-stone-900 py-20 md:px-0">
       <div className="text-center text-3xl md:text-4xl pb-8">
         Upcoming Burns
       </div>
-      <div className="max-w-5xl mx-auto pb-16 overflow-x-auto">
+      <div className="max-w-5xl mx-auto overflow-x-auto">
         <div className="flex flex-wrap md:-mx-4 justify-center">
           {projects.map((project) => (
             <div className="md:w-1/3 p-4 flex" key={project.name}>
