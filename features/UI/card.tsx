@@ -4,11 +4,10 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   project: {
     name: string;
     imageUrl: string;
-    description?: string;
   };
 }
 export const Card = ({ project, className, children }: CardProps) => {
-  const { name, imageUrl, description } = project;
+  const { name, imageUrl } = project;
 
   return (
     <div
@@ -26,7 +25,7 @@ export const Card = ({ project, className, children }: CardProps) => {
       />
       <div className="p-6">
         <div className="text-2xl md:text-3xl mb-4 uppercase">{name}</div>
-        <div className="text-xl">{description}</div>
+
         {children}
       </div>
     </div>

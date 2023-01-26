@@ -13,18 +13,19 @@ export const Featured = () => {
       <div className="text-center text-3xl md:text-4xl mb-16">
         Featured Burn
       </div>
-      <div className="flex max-w-5xl mx-auto border-2 border-orange-500 rounded-xl border-opacity-40 shadow-deep cursor-pointer">
-        <Link className="flex" href="/burns/narentines">
-          <div className="w-1/3 flex flex-shrink-0">
+      <div className="flex max-w-5xl md:mx-auto border-2 border-orange-500 rounded-xl border-opacity-40 shadow-deep cursor-pointer hover:scale-[1.03] hover:shadow-deep-float mx-4">
+        <Link className="flex flex-wrap" href="/burns/narentines">
+          <div className="w-full md:w-1/3 flex flex-shrink-0 h-72 md:h-auto">
             <Image
+              style={{ objectFit: "cover" }}
               src={project.imageUrl}
               alt=""
-              width="500"
-              height="500"
-              className="rounded-l-xl"
+              width="600"
+              height="600"
+              className="rounded-t-xl md:rounded-l-xl md:rounded-r-none"
             />
           </div>
-          <div className="p-8">
+          <div className="p-8 w-full md:w-2/3">
             <div className="text-3xl md:text-4xl mb-4 uppercase">
               {project.name}
             </div>
