@@ -17,7 +17,7 @@ export default function Home() {
         <div className="py-10">
           <div className="w-full border border-slate-300 opacity-20"></div>
         </div>
-        <div className="italic text-sm uppercase">Coming soon</div>
+        <div className="italic text-xs uppercase">Coming soon</div>
       </div>
 
       <style jsx>{`

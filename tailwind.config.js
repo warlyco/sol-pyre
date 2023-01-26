@@ -21,5 +21,5 @@ module.exports = {
   },
   plugins: [],
 
-  safelist: ["pt-32", "max-w-5xl", "mx-auto", "md:pt-20", "mb-32"],
+  safelist: ["pt-32", "max-w-5xl", "mx-auto", "md:pt-20", "mb-32", "underline"],
 };
