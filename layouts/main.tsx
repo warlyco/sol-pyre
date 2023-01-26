@@ -11,13 +11,10 @@ export default function MainLayout({ children }: Props) {
   });
 
   return (
-    <div
-      className="relative bg-stone-900 overflow-x-hidden"
-      suppressHydrationWarning={true}
-    >
+    <div className="relative bg-stone-900" suppressHydrationWarning={true}>
       <Navbar />
       <Toaster />
-      <div className="mx-auto bg-stone-900">{children}</div>
+      {children}
       <div className="fixed bottom-0 mx-auto w-full">
         <div className="flex justify-center text-slate-300 text-xs w-full">
           <div className="py-2">

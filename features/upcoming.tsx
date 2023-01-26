@@ -39,7 +39,7 @@ export const Upcoming = () => {
       <div className="text-center text-3xl md:text-4xl pb-8">
         Upcoming Burns
       </div>
-      <div className="max-w-5xl mx-auto pb-16">
+      <div className="max-w-5xl mx-auto pb-16 overflow-x-auto">
         <div className="flex flex-wrap md:-mx-4 justify-center">
           {projects.map((project) => (
             <div className="md:w-1/3 p-4 flex" key={project.name}>
