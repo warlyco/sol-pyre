@@ -25,7 +25,6 @@ export const Card = ({ project, className, children }: CardProps) => {
       />
       <div className="p-6">
         <div className="text-2xl md:text-3xl mb-4 uppercase">{name}</div>
-
         {children}
       </div>
     </div>

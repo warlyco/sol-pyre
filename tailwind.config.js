@@ -4,6 +4,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        narentines: {
+          amber: {
+            100: "#e9cfa6",
+            200: "#d7ad6d",
+          },
+          green: {
+            100: "#69754e",
+          },
+        },
         amber: {
           200: "#e9cfa6",
           300: "#F7CCA3",

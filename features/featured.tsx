@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const project = {
   name: "Narentines",
-  imageUrl: "/images/projects/narentines.webp",
+  imageUrl: "/images/projects/narentines/narentines.webp",
 };
 export const Featured = () => {
   return (

@@ -1,3 +1,5 @@
+import { BottomBanner } from "features/UI/bottom-banner";
+
 export default function About() {
   return (
     <div className="flex justify-center bg-stone-900 min-h-screen relative">
@@ -55,16 +57,14 @@ export default function About() {
           </p>
         </div>
       </div>
-      <div className="fixed bottom-0 mx-auto w-full">
-        <div className="flex justify-center text-slate-300 w-full">
-          <div className="py-2 text-xs">
-            🛠️ by{" "}
-            <a href="https://twitter.com/warly_sol" className="underline">
-              warly.sol
-            </a>
-          </div>
+      <BottomBanner>
+        <div className="text-xs">
+          🛠️ by{" "}
+          <a href="https://twitter.com/warly_sol" className="underline">
+            warly.sol
+          </a>
         </div>
-      </div>
+      </BottomBanner>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { BurnCard } from "features/burn-card";
 const projects = [
   {
     name: "Narentines",
-    imageUrl: "/images/projects/narentines.webp",
+    imageUrl: "/images/projects/narentines/narentines.webp",
     description: (
       <div className="space-y-2">
         <div>
@@ -16,21 +16,6 @@ const projects = [
       </div>
     ),
   },
-  // {
-  //   name: "Builders DAO",
-  //   imageUrl: "/images/projects/thebuildersdao.webp",
-  //   description: (
-  //     <div className="space-y-2">
-  //       <div>
-  //         <span className="underline">Burn:</span> 1x Tin can
-  //       </div>
-  //       <div>
-  //         <span className="underline">Receive:</span> 1x Piece of @bus&apos;s
-  //         soul
-  //       </div>
-  //     </div>
-  //   ),
-  // },
 ];
 
 export const Upcoming = () => {
