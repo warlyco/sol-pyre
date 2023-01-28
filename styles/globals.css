@@ -9,7 +9,6 @@ body,
   min-height: 100vh;
   height: 100%;
   font-family: 'Quicksand', sans-serif;
-  @apply text-slate-300 bg-stone-900;
 }
 
 .wallet-adapter-button.wallet-adapter-button-trigger {

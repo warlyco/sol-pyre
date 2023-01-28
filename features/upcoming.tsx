@@ -20,7 +20,7 @@ const projects = [
 
 export const Upcoming = () => {
   return (
-    <div className="bg-stone-900 py-20 md:px-0">
+    <div className="bg-stone-900 py-20 md:px-0 text-stone-300">
       <div className="text-center text-3xl md:text-4xl pb-8">
         Upcoming Burns
       </div>

@@ -152,6 +152,7 @@ export default function Home() {
 
   useEffect(() => {
     if (collection.length || hasBeenFetched) return;
+
     fetchNFTs();
   }, [collection.length, fetchNFTs, hasBeenFetched]);
 
@@ -173,7 +174,7 @@ export default function Home() {
             onClick={() => handleSelectNft(nft)}
           >
             <Image
-              className="rounded-xl border-2 border-green-800 shadow-deep hover:shadow-deep-float"
+              className="rounded-xl border-2 border-narentines-green-100 shadow-deep hover:shadow-deep-float"
               src={nft?.json?.image || ""}
               alt="Nft image"
               width="200"
@@ -185,38 +186,27 @@ export default function Home() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center bg-narentines-green-100 min-h-screen relative overflow-hidden">
+        <Head>
+          <title>Narentines Pyre</title>
+        </Head>
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex justify-center items-center bg-green-800 min-h-screen relative overflow-hidden">
+    <div className="flex justify-center items-center bg-narentines-green-100 min-h-screen relative overflow-hidden">
       <Head>
         <title>Narentines Pyre</title>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-        <meta name="msapplication-TileColor" content="#da532c" />
-        <meta name="theme-color" content="#ffffff" />
       </Head>
 
       <div>
-        {isLoading && <Spinner />}
-        {!isLoading && !collection.length && (
+        {!collection.length && (
           <div className="flex flex-col items-center">
-            <h1 className="text-3xl text-amber-400 max-w-md text-center">
+            <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
               {/* "You do not have any NFTs in this burn campaign." */}
 
               {!!publicKey
@@ -225,37 +215,38 @@ export default function Home() {
             </h1>
           </div>
         )}
-        {!isLoading && !!collection.length && !nftToBurn && (
-          <button
-            className="text-green-800 border-2 border-amber-400 hover: bg-amber-400 p-4 rounded-xl shadow-deep hover:shadow-deep-float hover:bg-green-800 hover:text-amber-400 text-2xl font-bold overflow-y-auto"
-            onClick={openModal}
-          >
-            Select Sacrifice
-          </button>
-        )}
-        {!isLoading && !!nftToBurn && (
+        {!!collection.length && (
           <>
-            <Card
-              project={{
-                name: nftToBurn.json.name,
-                imageUrl: nftToBurn.json.image,
-              }}
-            />
-            <div className="flex justify-between space-x-2">
-              <button
-                className="text-green-800 border-2 border-green-800 bg-amber-400 p-4 py-2 rounded-xl shadow-md hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
-                onClick={() => setNftToBurn(undefined)}
-              >
-                Cancel
-              </button>
-              <button
-                className="text-amber-400 border-2 border-green-800 bg-green-800 p-4 py-2 rounded-xl shadow-md hover:bg-orange-600 hover:text-amber-400 text-2xl font-bold overflow-y-auto w-full"
-                onClick={handleTransferNft}
-              >
-                Burn
-              </button>
-            </div>
+            {
+              <Card
+                onClick={!!nftToBurn ? () => {} : openModal}
+                project={
+                  !!nftToBurn
+                    ? {
+                        name: nftToBurn.json.name,
+                        imageUrl: nftToBurn.json.image,
+                      }
+                    : undefined
+                }
+              />
+            }
           </>
+        )}
+        {!!nftToBurn && (
+          <div className="flex justify-between space-x-4 mt-16">
+            <button
+              className="text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
+              onClick={() => setNftToBurn(undefined)}
+            >
+              Cancel
+            </button>
+            <button
+              className="text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl hover:bg-orange-600 hover:text-narentines-amber-200 text-2xl font-bold overflow-y-auto w-full"
+              onClick={handleTransferNft}
+            >
+              Burn
+            </button>
+          </div>
         )}
       </div>
       <BottomBanner>

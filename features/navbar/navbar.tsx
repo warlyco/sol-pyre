@@ -16,9 +16,9 @@ interface ProjectConfig {
 const projectConfigs: ProjectConfig[] = [
   {
     name: "Narentines",
-    headerImage: "/images/projects/narentines/narentines-logo.svg",
-    bgColor: "bg-stone-900",
-    route: "/burn/narentines",
+    headerImage: "/images/projects/narentines/narentines-header.svg",
+    bgColor: "bg-narentines-green-100",
+    route: "/burns/narentines",
   },
 ];
 
@@ -46,14 +46,28 @@ export const Navbar = () => {
       <header className="mx-auto max-w-6xl">
         <nav className="w-full flex items-center justify-between text-2xl uppercase p-4 tracking-widest">
           <div className="flex space-x-4 items-center">
-            <Image
-              className="w-4 h-5"
-              src="/images/sol-flame.png"
-              alt="logo"
-              width="22"
-              height="1"
-            />
-            <Link href="/">SolPyre</Link>
+            <Link href="/" className="flex items-center">
+              <div className="w-10 h-10 bg-stone-900 rounded-full flex justify-center items-center">
+                <Image
+                  className="w-4 h-5"
+                  src="/images/sol-flame.png"
+                  alt="logo"
+                  width="22"
+                  height="1"
+                />
+              </div>
+
+              {activeProject ? (
+                <Image
+                  src={activeProject.headerImage}
+                  alt={activeProject.name}
+                  width="236"
+                  height="43"
+                />
+              ) : (
+                <span className="text-slate-300">SolPyre</span>
+              )}
+            </Link>
           </div>
           <div className="flex justify-center items-center space-x-4">
             {socialLinks.map((item) => (

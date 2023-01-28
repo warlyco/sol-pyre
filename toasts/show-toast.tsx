@@ -13,8 +13,8 @@ const showToast = ({
   error?: AppError;
 }) => {
   toast.custom(
-    <div className="flex flex-col bg-amber-400 rounded-xl text-xl shadow-deep-float p-4 max-w-sm text-center">
-      <div>{primaryMessage}</div>
+    <div className="flex flex-col bg-narentines-green-100 rounded-xl text-xl shadow-deep-float p-4 max-w-sm text-center">
+      <div className="text-stone-800">{primaryMessage}</div>
       {secondaryMessage && <div>{secondaryMessage}</div>}
       {link && (
         <a
