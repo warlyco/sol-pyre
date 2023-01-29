@@ -75,20 +75,20 @@ export default async function handler(
     console.log("burning mint:", mint);
 
     try {
-      const latestBlockhash = await connection.getLatestBlockhash();
-      const transaction = new Transaction({ ...latestBlockhash });
+      // const latestBlockhash = await connection.getLatestBlockhash();
+      // const transaction = new Transaction({ ...latestBlockhash });
 
-      transaction.add(
-        createBurnCheckedInstruction(
-          new PublicKey(tokenAccountAddress),
-          new PublicKey(mint),
-          firePublicKey,
-          1,
-          0
-        )
-      );
+      // transaction.add(
+      //   createBurnCheckedInstruction(
+      //     new PublicKey(tokenAccountAddress),
+      //     new PublicKey(mint),
+      //     firePublicKey,
+      //     1,
+      //     0
+      //   )
+      // );
 
-      transaction.feePayer = firePublicKey;
+      // transaction.feePayer = firePublicKey;
 
       // burnTxSignature = await sendAndConfirmTransaction(
       //   connection,
@@ -101,6 +101,7 @@ export default async function handler(
       // );
 
       // console.log("burned", burnTxSignature);
+      console.log("rewarding");
 
       const nftMetasFromMetaplex = await metaplex
         .nfts()
@@ -108,6 +109,8 @@ export default async function handler(
 
       // @ts-ignore
       const rewardMintAddress: PublicKey = nftMetasFromMetaplex[0].mintAddress;
+
+      console.log("rewardMintAddress", rewardMintAddress.toString());
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
