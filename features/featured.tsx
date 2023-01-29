@@ -1,5 +1,3 @@
-import { BurnCard } from "features/burn-card";
-import { Card } from "features/UI/card";
 import Image from "next/image";
 import Link from "next/link";
 

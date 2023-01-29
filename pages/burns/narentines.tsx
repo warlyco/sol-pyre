@@ -143,10 +143,10 @@ export default function Home() {
         callback: () => setIsLoading(false),
         successCallback: () => {
           showToast({
-            primaryMessage: "🔥 NFT sent to the furnace 🔥",
+            primaryMessage: "🔥 NFTs sent to the furnace 🔥",
             secondaryMessage: "You will receive your reward shortly!",
           });
-          setNftsToBurn(undefined);
+          setNftsToBurn([undefined, undefined, undefined]);
         },
       },
       asWallet(wallet)
@@ -187,10 +187,8 @@ export default function Home() {
         {!collection.length && (
           <div className="flex flex-col items-center">
             <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
-              {/* "You do not have any NFTs in this burn campaign." */}
-
               {!!publicKey
-                ? "Campaign has not started yet"
+                ? "You do not have any NFTs in this burn campaign."
                 : "Please connect your wallet"}
             </h1>
           </div>

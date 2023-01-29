@@ -1,4 +1,4 @@
-import { BurnCard } from "features/burn-card";
+import { Card } from "features/UI/card";
 
 const projects = [
   {
@@ -28,7 +28,7 @@ export const Upcoming = () => {
         <div className="flex flex-wrap md:-mx-4 justify-center">
           {projects.map((project) => (
             <div className="md:w-1/3 p-4 flex" key={project.name}>
-              <BurnCard project={project}>{project?.description}</BurnCard>
+              <Card project={project}>{project?.description}</Card>
             </div>
           ))}
         </div>
