@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
 import Overlay from "features/UI/overlay";
 import { useIsLoading } from "hooks/is-loading";
+import classNames from "classnames";
 
 export interface NftCardProps extends React.HTMLAttributes<HTMLDivElement> {
   nft?: {
@@ -14,10 +15,16 @@ export interface NftCardProps extends React.HTMLAttributes<HTMLDivElement> {
     };
   };
   collection: [];
-  setNftToBurn: (nft: Nft) => void;
+  setNftToBurn: (nft: Nft | undefined) => void;
+  nftsToBurn: Nft[];
 }
 
-export const NftCard = ({ nft, collection, setNftToBurn }: NftCardProps) => {
+export const NftCard = ({
+  nft,
+  collection,
+  setNftToBurn,
+  nftsToBurn,
+}: NftCardProps) => {
   const { isLoading } = useIsLoading();
   const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
 
@@ -40,8 +47,15 @@ export const NftCard = ({ nft, collection, setNftToBurn }: NftCardProps) => {
         {collection.map((nft: Nft, i: number) => (
           <div
             key={i}
-            className="p-2 rounded-xl py-3 cursor-pointer hover:scale-[1.03] my-4"
-            onClick={() => handleSelectNft(nft)}
+            className={classNames(
+              "p-2 rounded-xl py-3 hover:scale-[1.03] my-4",
+              nftsToBurn.includes(nft)
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            )}
+            onClick={
+              nftsToBurn.includes(nft) ? () => {} : () => handleSelectNft(nft)
+            }
           >
             <Image
               className="rounded-xl border-2 border-narentines-green-100 shadow-deep hover:shadow-deep-float"
@@ -59,7 +73,7 @@ export const NftCard = ({ nft, collection, setNftToBurn }: NftCardProps) => {
   return (
     <>
       <Card
-        onClick={!!nft ? () => {} : openModal}
+        onClick={!!nft ? () => setNftToBurn(undefined) : openModal}
         project={
           !!nft
             ? {

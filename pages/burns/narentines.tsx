@@ -26,6 +26,7 @@ import showToast from "toasts/show-toast";
 import { Card } from "features/UI/card";
 import { BottomBanner } from "features/UI/bottom-banner";
 import { NftCard } from "features/UI/nft-card";
+import classNames from "classnames";
 
 export default function Home() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -195,47 +196,55 @@ export default function Home() {
           </div>
         )}
         {!!collection.length && (
-          <div className="flex">
-            <div className="px-4">
-              <NftCard
-                setNftToBurn={(selectedNft) => {
-                  setNftsToBurn([
-                    ...nftsToBurn.slice(0, 0),
-                    selectedNft,
-                    ...nftsToBurn.slice(0 + 1),
-                  ]);
-                }}
-                nft={nftsToBurn?.[0]}
-                collection={collection}
-              />
+          <>
+            <div className="text-3xl text-center text-narentines-amber-200 mb-12">
+              Select 3 Narentines to Sacrifice
             </div>
-            <div className="px-4">
-              <NftCard
-                setNftToBurn={(selectedNft) => {
-                  setNftsToBurn([
-                    ...nftsToBurn.slice(0, 1),
-                    selectedNft,
-                    ...nftsToBurn.slice(1 + 1),
-                  ]);
-                }}
-                nft={nftsToBurn?.[1]}
-                collection={collection}
-              />
+            <div className="flex">
+              <div className="px-4">
+                <NftCard
+                  nftsToBurn={nftsToBurn}
+                  setNftToBurn={(selectedNft) => {
+                    setNftsToBurn([
+                      ...nftsToBurn.slice(0, 0),
+                      selectedNft,
+                      ...nftsToBurn.slice(0 + 1),
+                    ]);
+                  }}
+                  nft={nftsToBurn?.[0]}
+                  collection={collection}
+                />
+              </div>
+              <div className="px-4">
+                <NftCard
+                  nftsToBurn={nftsToBurn}
+                  setNftToBurn={(selectedNft) => {
+                    setNftsToBurn([
+                      ...nftsToBurn.slice(0, 1),
+                      selectedNft,
+                      ...nftsToBurn.slice(1 + 1),
+                    ]);
+                  }}
+                  nft={nftsToBurn?.[1]}
+                  collection={collection}
+                />
+              </div>
+              <div className="px-4">
+                <NftCard
+                  nftsToBurn={nftsToBurn}
+                  setNftToBurn={(selectedNft) => {
+                    setNftsToBurn([
+                      ...nftsToBurn.slice(0, 2),
+                      selectedNft,
+                      ...nftsToBurn.slice(2 + 1),
+                    ]);
+                  }}
+                  nft={nftsToBurn?.[2]}
+                  collection={collection}
+                />
+              </div>
             </div>
-            <div className="px-4">
-              <NftCard
-                setNftToBurn={(selectedNft) => {
-                  setNftsToBurn([
-                    ...nftsToBurn.slice(0, 2),
-                    selectedNft,
-                    ...nftsToBurn.slice(2 + 1),
-                  ]);
-                }}
-                nft={nftsToBurn?.[2]}
-                collection={collection}
-              />
-            </div>
-          </div>
+          </>
         )}
         {!!publicKey && (
           <div className="flex justify-between space-x-4 mt-16 max-w-md mx-auto">
@@ -243,10 +252,20 @@ export default function Home() {
               className="text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
               onClick={() => setNftsToBurn([undefined, undefined, undefined])}
             >
-              Cancel
+              Clear
             </button>
             <button
-              className="text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl hover:bg-orange-600 hover:text-narentines-amber-200 text-2xl font-bold overflow-y-auto w-full"
+              disabled={nftsToBurn.some((nft: Nft) => !nft)}
+              className={classNames(
+                "text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl text-2xl font-bold overflow-y-auto w-full",
+                {
+                  "opacity-50 cursor-not-allowed": nftsToBurn.some(
+                    (nft: Nft) => !nft
+                  ),
+                  "hover:bg-orange-600 hover:text-narentines-amber-200":
+                    !nftsToBurn.some((nft: Nft) => !nft),
+                }
+              )}
               onClick={handleTransferNft}
             >
               Burn
