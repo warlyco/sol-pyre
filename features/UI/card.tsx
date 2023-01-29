@@ -13,7 +13,7 @@ export const Card = ({ project, className, children, onClick }: CardProps) => {
       onClick={onClick}
       className={classNames([
         className,
-        "bg-stone-900 rounded-2xl shadow-deep border-2 border-narentines-amber-200 cursor-pointer hover:shadow-deep-float hover:scale-[1.02] transition-all duration-300 ease-in-out",
+        "bg-stone-800 rounded-2xl shadow-deep border-2 border-narentines-amber-200 cursor-pointer hover:shadow-deep-float hover:scale-[1.02] transition-all duration-300 ease-in-out",
       ])}
     >
       {!!project?.imageUrl ? (
@@ -27,7 +27,7 @@ export const Card = ({ project, className, children, onClick }: CardProps) => {
           />
         </div>
       ) : (
-        <div className="bg-stone-900 rounded-xl h-56 w-56" />
+        <div className="bg-stone-800 rounded-xl h-56 w-56" />
       )}
     </div>
   );

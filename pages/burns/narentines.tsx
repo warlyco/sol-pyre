@@ -25,6 +25,7 @@ import { asWallet } from "utils/as-wallet";
 import showToast from "toasts/show-toast";
 import { Card } from "features/UI/card";
 import { BottomBanner } from "features/UI/bottom-banner";
+import { NftCard } from "features/UI/nft-card";
 
 export default function Home() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -32,7 +33,11 @@ export default function Home() {
   const wallet = useWallet();
   const { connection } = useConnection();
   const [collection, setCollection] = useState<any>([]);
-  const [nftToBurn, setNftToBurn] = useState<any>(undefined);
+  const [nftsToBurn, setNftsToBurn] = useState<any>([
+    undefined,
+    undefined,
+    undefined,
+  ]);
   const { publicKey, signTransaction } = wallet;
 
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
@@ -69,53 +74,62 @@ export default function Home() {
     setIsLoading(false);
   }, [publicKey, setIsLoading, connection]);
 
+  const handleTransferNfts = useCallback(async () => {}, []);
+
   const handleTransferNft = useCallback(async () => {
-    if (!nftToBurn?.address || !publicKey || !signTransaction) return;
+    if (
+      (!nftsToBurn[0] && !nftsToBurn[1] && !nftsToBurn[2]) ||
+      !publicKey ||
+      !signTransaction
+    )
+      return;
     setIsLoading(true);
     showToast({
       primaryMessage: "🔥 Sending your NFT to the furnace 🔥",
     });
 
-    const fromTokenAccountAddress = await splToken.getAssociatedTokenAddress(
-      nftToBurn?.address,
-      publicKey
-    );
-
-    const toTokenAccountAddress = await splToken.getAssociatedTokenAddress(
-      nftToBurn?.address,
-      new PublicKey(BURNING_WALLET_ADDRESS)
-    );
-
-    const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-      nftToBurn?.address,
-      new PublicKey(BURNING_WALLET_ADDRESS)
-    );
-
-    const receiverAccount = await connection.getAccountInfo(
-      associatedDestinationTokenAddr
-    );
-
     const instructions: TransactionInstructionCtorFields[] = [];
 
-    if (!receiverAccount) {
+    for (const nft of nftsToBurn) {
+      const fromTokenAccountAddress = await splToken.getAssociatedTokenAddress(
+        nft?.address,
+        publicKey
+      );
+
+      const toTokenAccountAddress = await splToken.getAssociatedTokenAddress(
+        nft?.address,
+        new PublicKey(BURNING_WALLET_ADDRESS)
+      );
+
+      const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+        nft?.address,
+        new PublicKey(BURNING_WALLET_ADDRESS)
+      );
+
+      const receiverAccount = await connection.getAccountInfo(
+        associatedDestinationTokenAddr
+      );
+
+      if (!receiverAccount) {
+        instructions.push(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            associatedDestinationTokenAddr,
+            new PublicKey(BURNING_WALLET_ADDRESS),
+            nft?.address
+          )
+        );
+      }
+
       instructions.push(
-        createAssociatedTokenAccountInstruction(
+        createTransferInstruction(
+          fromTokenAccountAddress,
+          toTokenAccountAddress,
           publicKey,
-          associatedDestinationTokenAddr,
-          new PublicKey(BURNING_WALLET_ADDRESS),
-          nftToBurn?.address
+          1
         )
       );
     }
-
-    instructions.push(
-      createTransferInstruction(
-        fromTokenAccountAddress,
-        toTokenAccountAddress,
-        publicKey,
-        1
-      )
-    );
 
     const latestBlockhash = await connection.getLatestBlockhash();
     const transaction = new Transaction({ ...latestBlockhash });
@@ -131,60 +145,25 @@ export default function Home() {
             primaryMessage: "🔥 NFT sent to the furnace 🔥",
             secondaryMessage: "You will receive your reward shortly!",
           });
-          setNftToBurn(undefined);
+          setNftsToBurn(undefined);
         },
       },
       asWallet(wallet)
     );
   }, [
-    connection,
-    nftToBurn?.address,
+    nftsToBurn,
     publicKey,
-    setIsLoading,
     signTransaction,
+    setIsLoading,
+    connection,
     wallet,
   ]);
-
-  const handleSelectNft = (nft: Nft) => {
-    setNftToBurn(nft);
-    setModal(undefined);
-  };
 
   useEffect(() => {
     if (collection.length || hasBeenFetched) return;
 
     fetchNFTs();
   }, [collection.length, fetchNFTs, hasBeenFetched]);
-
-  const openModal = () => {
-    setModal(
-      <div className="flex flex-wrap justify-around overflow-y-auto relative">
-        <div className="sticky flex w-full justify-end">
-          <button
-            className="self-end text-2xl"
-            onClick={() => setModal(undefined)}
-          >
-            <XCircleIcon className="h-8 w-8" />
-          </button>
-        </div>
-        {collection.map((nft: Nft, i: number) => (
-          <div
-            key={i}
-            className="p-2 rounded-xl py-3 cursor-pointer hover:scale-[1.03] my-4"
-            onClick={() => handleSelectNft(nft)}
-          >
-            <Image
-              className="rounded-xl border-2 border-narentines-green-100 shadow-deep hover:shadow-deep-float"
-              src={nft?.json?.image || ""}
-              alt="Nft image"
-              width="200"
-              height="200"
-            />
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -216,27 +195,53 @@ export default function Home() {
           </div>
         )}
         {!!collection.length && (
-          <>
-            {
-              <Card
-                onClick={!!nftToBurn ? () => {} : openModal}
-                project={
-                  !!nftToBurn
-                    ? {
-                        name: nftToBurn.json.name,
-                        imageUrl: nftToBurn.json.image,
-                      }
-                    : undefined
-                }
+          <div className="flex">
+            <div className="px-4">
+              <NftCard
+                setNftToBurn={(selectedNft) => {
+                  setNftsToBurn([
+                    ...nftsToBurn.slice(0, 0),
+                    selectedNft,
+                    ...nftsToBurn.slice(0 + 1),
+                  ]);
+                }}
+                nft={nftsToBurn?.[0]}
+                collection={collection}
               />
-            }
-          </>
+            </div>
+            <div className="px-4">
+              <NftCard
+                setNftToBurn={(selectedNft) => {
+                  setNftsToBurn([
+                    ...nftsToBurn.slice(0, 1),
+                    selectedNft,
+                    ...nftsToBurn.slice(1 + 1),
+                  ]);
+                }}
+                nft={nftsToBurn?.[1]}
+                collection={collection}
+              />
+            </div>
+            <div className="px-4">
+              <NftCard
+                setNftToBurn={(selectedNft) => {
+                  setNftsToBurn([
+                    ...nftsToBurn.slice(0, 2),
+                    selectedNft,
+                    ...nftsToBurn.slice(2 + 1),
+                  ]);
+                }}
+                nft={nftsToBurn?.[2]}
+                collection={collection}
+              />
+            </div>
+          </div>
         )}
-        {!!nftToBurn && (
-          <div className="flex justify-between space-x-4 mt-16">
+        {!!publicKey && (
+          <div className="flex justify-between space-x-4 mt-16 max-w-md mx-auto">
             <button
               className="text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
-              onClick={() => setNftToBurn(undefined)}
+              onClick={() => setNftsToBurn([undefined, undefined, undefined])}
             >
               Cancel
             </button>
@@ -264,7 +269,7 @@ export default function Home() {
           </div>
         </a>
       </BottomBanner>
-      <Overlay isVisible={isLoading || !!modal} modal={modal} />
+      <Overlay isVisible={isLoading} />
 
       <style jsx>{`
         html,

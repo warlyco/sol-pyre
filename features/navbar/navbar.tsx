@@ -70,18 +70,19 @@ export const Navbar = () => {
             </Link>
           </div>
           <div className="flex justify-center items-center space-x-4">
-            {socialLinks.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-slate-300"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span className="sr-only">{item.name}</span>
-                <item.icon className="h-6 w-6" aria-hidden="true" />
-              </a>
-            ))}
+            {!activeProject &&
+              socialLinks.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-slate-300"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="sr-only">{item.name}</span>
+                  <item.icon className="h-6 w-6" aria-hidden="true" />
+                </a>
+              ))}
             {router.pathname.includes("/burn") && <WalletMultiButton />}
           </div>
         </nav>
