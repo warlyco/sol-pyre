@@ -90,17 +90,17 @@ export default async function handler(
 
       transaction.feePayer = firePublicKey;
 
-      burnTxSignature = await sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [fireKeypair],
-        {
-          commitment: "confirmed",
-          maxRetries: 2,
-        }
-      );
+      // burnTxSignature = await sendAndConfirmTransaction(
+      //   connection,
+      //   transaction,
+      //   [fireKeypair],
+      //   {
+      //     commitment: "confirmed",
+      //     maxRetries: 2,
+      //   }
+      // );
 
-      console.log("burned", burnTxSignature);
+      // console.log("burned", burnTxSignature);
 
       const nftMetasFromMetaplex = await metaplex
         .nfts()
