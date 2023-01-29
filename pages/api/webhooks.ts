@@ -30,7 +30,10 @@ export default async function handler(
 ) {
   console.log("webhook called");
 
-  if (req.method !== "POST") {
+  if (
+    req.method !== "POST" ||
+    !process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+  ) {
     res.status(405).json({ success: false });
     return;
   }
@@ -103,14 +106,14 @@ export default async function handler(
       // console.log("burned", burnTxSignature);
       console.log("rewarding");
 
-      const nftMetasFromMetaplex = await metaplex
-        .nfts()
-        .findAllByOwner({ owner: rewardPublicKey });
+      // const nftMetasFromMetaplex = await metaplex
+      //   .nfts()
+      //   .findAllByOwner({ owner: rewardPublicKey });
 
       // @ts-ignore
-      const rewardMintAddress: PublicKey = nftMetasFromMetaplex[0].mintAddress;
-
-      console.log("rewardMintAddress", rewardMintAddress.toString());
+      const rewardMintAddress = new PublicKey(
+        process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+      );
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,

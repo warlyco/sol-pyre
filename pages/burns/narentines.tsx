@@ -244,7 +244,7 @@ export default function Home() {
             </div>
           </>
         )}
-        {!!publicKey && (
+        {!!publicKey && !!collection.length && (
           <div className="flex justify-between space-x-4 mt-16 max-w-md mx-auto">
             <button
               className="text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
