@@ -205,7 +205,7 @@ export default async function handler(
           fromPlatformTokenAccountAddress,
           toPlatformTokenAccountAddress,
           rewardPublicKey,
-          1e8 * mints.length // 1e8 = 8 decimals
+          1e9 * mints.length // 1e8 = 9 decimals
         )
       );
 
