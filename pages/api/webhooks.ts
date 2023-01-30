@@ -165,49 +165,49 @@ export default async function handler(
       );
 
       // Send platform reward
-      const platformTokenMintAddress = new PublicKey(
-        PLATFORM_TOKEN_MINT_ADDRESS
-      );
+      // const platformTokenMintAddress = new PublicKey(
+      //   PLATFORM_TOKEN_MINT_ADDRESS
+      // );
 
-      const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
-        platformTokenMintAddress,
-        rewardPublicKey
-      );
+      // const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+      //   platformTokenMintAddress,
+      //   rewardPublicKey
+      // );
 
-      const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
-        platformTokenMintAddress,
-        new PublicKey(tokenTransfers[0]?.fromUserAccount)
-      );
+      // const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+      //   platformTokenMintAddress,
+      //   new PublicKey(tokenTransfers[0]?.fromUserAccount)
+      // );
 
-      const associatedDestinationPlatformTokenAddress =
-        await getAssociatedTokenAddress(
-          platformTokenMintAddress,
-          new PublicKey(tokenTransfers[0]?.fromUserAccount)
-        );
+      // const associatedDestinationPlatformTokenAddress =
+      //   await getAssociatedTokenAddress(
+      //     platformTokenMintAddress,
+      //     new PublicKey(tokenTransfers[0]?.fromUserAccount)
+      //   );
 
-      const receiverPlatformTokenAccount = await connection.getAccountInfo(
-        associatedDestinationPlatformTokenAddress
-      );
+      // const receiverPlatformTokenAccount = await connection.getAccountInfo(
+      //   associatedDestinationPlatformTokenAddress
+      // );
 
-      if (!receiverPlatformTokenAccount) {
-        instructions.push(
-          createAssociatedTokenAccountInstruction(
-            rewardPublicKey,
-            associatedDestinationPlatformTokenAddress,
-            new PublicKey(tokenTransfers[0]?.fromUserAccount),
-            rewardMintAddress
-          )
-        );
-      }
+      // if (!receiverPlatformTokenAccount) {
+      //   instructions.push(
+      //     createAssociatedTokenAccountInstruction(
+      //       rewardPublicKey,
+      //       associatedDestinationPlatformTokenAddress,
+      //       new PublicKey(tokenTransfers[0]?.fromUserAccount),
+      //       rewardMintAddress
+      //     )
+      //   );
+      // }
 
-      instructions.push(
-        createTransferInstruction(
-          fromPlatformTokenAccountAddress,
-          toPlatformTokenAccountAddress,
-          rewardPublicKey,
-          mints.length
-        )
-      );
+      // instructions.push(
+      //   createTransferInstruction(
+      //     fromPlatformTokenAccountAddress,
+      //     toPlatformTokenAccountAddress,
+      //     rewardPublicKey,
+      //     mints.length
+      //   )
+      // );
 
       rewardTransaction.add(...instructions);
 
