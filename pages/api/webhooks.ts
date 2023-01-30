@@ -72,8 +72,12 @@ export default async function handler(
   ) {
     // handle burn and reward
     const { tokenTransfers } = body[0];
-    const mints = tokenTransfers.map((transfer: Nft) => transfer.mint);
-    const tokenAccountAddress = tokenTransfers[0]?.toTokenAccount;
+    const mints = tokenTransfers.map(
+      (transfer: { mint: string; toTokenAccount: string }) => ({
+        mintAddress: transfer.mint,
+        tokenAccountAddress: transfer.toTokenAccount,
+      })
+    );
     const metaplex = Metaplex.make(connection);
 
     if (!mints.length) {
@@ -83,32 +87,37 @@ export default async function handler(
     console.log("burning mints:", mints);
 
     try {
-      // const latestBlockhash = await connection.getLatestBlockhash();
-      // const transaction = new Transaction({ ...latestBlockhash });
+      const latestBlockhash = await connection.getLatestBlockhash();
+      const transaction = new Transaction({ ...latestBlockhash });
+      const burnInstructions: TransactionInstructionCtorFields[] = [];
 
-      // transaction.add(
-      //   createBurnCheckedInstruction(
-      //     new PublicKey(tokenAccountAddress),
-      //     new PublicKey(mint),
-      //     firePublicKey,
-      //     1,
-      //     0
-      //   )
-      // );
+      for (const mint of mints) {
+        burnInstructions.push(
+          createBurnCheckedInstruction(
+            new PublicKey(mint.tokenAccountAddress),
+            new PublicKey(mint.mintAddress),
+            firePublicKey,
+            1,
+            0
+          )
+        );
+      }
 
-      // transaction.feePayer = firePublicKey;
+      transaction.add(...burnInstructions);
 
-      // burnTxAddress = await sendAndConfirmTransaction(
-      //   connection,
-      //   transaction,
-      //   [fireKeypair],
-      //   {
-      //     commitment: "confirmed",
-      //     maxRetries: 2,
-      //   }
-      // );
+      transaction.feePayer = firePublicKey;
 
-      // console.log("burned", burnTxAddress);
+      burnTxAddress = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [fireKeypair],
+        {
+          commitment: "confirmed",
+          maxRetries: 2,
+        }
+      );
+
+      console.log("burned", burnTxAddress);
       console.log("rewarding");
 
       // const nftMetasFromMetaplex = await metaplex
@@ -142,10 +151,10 @@ export default async function handler(
       const latestBlockhash2 = await connection.getLatestBlockhash();
       const rewardTransaction = new Transaction({ ...latestBlockhash2 });
 
-      const instructions: TransactionInstructionCtorFields[] = [];
+      const rewardInstructions: TransactionInstructionCtorFields[] = [];
 
       if (!receiverAccount) {
-        instructions.push(
+        rewardInstructions.push(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
             associatedDestinationTokenAddress,
@@ -155,7 +164,7 @@ export default async function handler(
         );
       }
 
-      instructions.push(
+      rewardInstructions.push(
         createTransferInstruction(
           fromTokenAccountAddress,
           toTokenAccountAddress,
@@ -190,7 +199,7 @@ export default async function handler(
       );
 
       if (!receiverPlatformTokenAccount) {
-        instructions.push(
+        rewardInstructions.push(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
             associatedDestinationPlatformTokenAddress,
@@ -200,7 +209,7 @@ export default async function handler(
         );
       }
 
-      instructions.push(
+      rewardInstructions.push(
         createTransferInstruction(
           fromPlatformTokenAccountAddress,
           toPlatformTokenAccountAddress,
@@ -209,7 +218,7 @@ export default async function handler(
         )
       );
 
-      rewardTransaction.add(...instructions);
+      rewardTransaction.add(...rewardInstructions);
 
       rewardTxAddress = await sendAndConfirmTransaction(
         connection,
