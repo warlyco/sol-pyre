@@ -225,7 +225,7 @@ export default async function handler(
         burnTxAddress: burnTxAddress || "fake-burn-tx-address",
         rewardTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
-        mintIds: [mints],
+        mintIds: mints,
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
       };
 
