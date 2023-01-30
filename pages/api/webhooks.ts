@@ -233,7 +233,9 @@ export default async function handler(
       console.log(`saving to db ${BASE_URL}/api/add-burn`, payload);
       console.log("tokenTransfers[0]", tokenTransfers[0]);
 
-      axios.post(`${BASE_URL}/api/add-burn`, payload);
+      const res = await axios.post(`${BASE_URL}/api/add-burn`, payload);
+
+      console.log(`posted to ${BASE_URL}/api/add-burn`, res);
     } catch (error) {
       console.log("error", error);
     }
