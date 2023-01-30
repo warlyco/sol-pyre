@@ -1,5 +1,4 @@
 import { BURNING_WALLET_ADDRESS } from "constants/constants";
-import { XCircleIcon } from "@heroicons/react/24/outline";
 import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
 import Overlay from "features/UI/overlay";
@@ -27,6 +26,7 @@ import { Card } from "features/UI/card";
 import { BottomBanner } from "features/UI/bottom-banner";
 import { NftCard } from "features/UI/nft-card";
 import classNames from "classnames";
+import Modal from "features/UI/modal";
 
 export default function Home() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -43,6 +43,59 @@ export default function Home() {
 
   const [transferInProgress, setTransferInProgress] = useState(false);
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
+
+  const showSuccessModal = () => {
+    setModal(
+      <Modal setModal={setModal}>
+        <div className="flex flex-col items-center justify-center max-w-md">
+          <div className="text-2xl font-bold text-center mb-6">
+            Burn successful!
+          </div>
+          <div className="text-center uppercase mb-3">Your rewards:</div>
+          <div className="flex max-w-xs mb-6 space-x-3 w-full justify-around">
+            <div className="flex flex-col items-center flex-1">
+              <Image
+                className="rounded-2xl mb-2 shadow-md"
+                src="/images/projects/narentines/lupers-free-mint-token.png"
+                width={100}
+                height={100}
+                alt="Lupers Free Mint Token"
+              />
+              <div className="font-bold max-w-[100px] text-center">
+                <span className="font-bold">1x</span> Lupers Free Mint
+              </div>
+            </div>
+            <div className="flex flex-col items-center flex-1">
+              <Image
+                className="rounded-2xl mb-2 shadow-md"
+                src="/images/anima-token.png"
+                width={100}
+                height={100}
+                alt="Anima Token"
+              />
+              <div className="font-bold max-w-[100px]">
+                <span className="font-bold">3x</span> $ANIMA
+              </div>
+            </div>
+          </div>
+          <p className="mb-4">
+            You should receive your rewards within seconds, however depending on
+            network congestion it may take up to 2 minutes for the rewards to
+            appear in your wallet. <br />
+            <br />
+            If you have any issues please contact us on the{" "}
+            <a
+              href="https://discord.gg/9Dfh3PJG8S"
+              className="underline text-narentines-green-100"
+            >
+              Narentines discord
+            </a>
+            {""}.
+          </p>
+        </div>
+      </Modal>
+    );
+  };
 
   const fetchNFTs = useCallback(async () => {
     if (!publicKey) return;
@@ -141,10 +194,7 @@ export default function Home() {
       {
         callback: () => setTransferInProgress(false),
         successCallback: () => {
-          showToast({
-            primaryMessage: "🔥 NFTs sent to the furnace 🔥",
-            secondaryMessage: "You will receive your reward shortly!",
-          });
+          showSuccessModal();
           setNftsToBurn([undefined, undefined, undefined]);
         },
       },
@@ -288,7 +338,7 @@ export default function Home() {
           </div>
         </a>
       </BottomBanner>
-      <Overlay isVisible={isLoading} />
+      <Overlay isVisible={!!modal} modal={modal} />
 
       <style jsx>{`
         html,

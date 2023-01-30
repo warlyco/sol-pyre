@@ -222,7 +222,7 @@ export default async function handler(
       );
 
       const payload = {
-        burnTxAddress: burnTxAddress || "fake-burn-tx-address",
+        burnTxAddress,
         rewardTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: mints,

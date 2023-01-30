@@ -6,6 +6,7 @@ import { Metaplex, Nft } from "@metaplex-foundation/js";
 import Overlay from "features/UI/overlay";
 import { useIsLoading } from "hooks/is-loading";
 import classNames from "classnames";
+import Modal from "features/UI/modal";
 
 export interface NftCardProps extends React.HTMLAttributes<HTMLDivElement> {
   nft?: {
@@ -37,15 +38,7 @@ export const NftCard = ({
 
   const openModal = () => {
     setModal(
-      <div className="flex flex-wrap justify-around overflow-y-auto relative">
-        <div className="sticky flex w-full justify-end">
-          <button
-            className="self-end text-2xl"
-            onClick={() => setModal(undefined)}
-          >
-            <XCircleIcon className="h-8 w-8" />
-          </button>
-        </div>
+      <Modal setModal={setModal}>
         {collection.map((nft: Nft, i: number) => (
           <div
             key={i}
@@ -68,7 +61,7 @@ export const NftCard = ({
             />
           </div>
         ))}
-      </div>
+      </Modal>
     );
   };
 
