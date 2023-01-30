@@ -6,7 +6,11 @@ import {
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
-import { BASE_URL, RPC_ENDPOINT } from "constants/constants";
+import {
+  BASE_URL,
+  PLATFORM_TOKEN_MINT_ADDRESS,
+  RPC_ENDPOINT,
+} from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
@@ -18,7 +22,7 @@ import {
 
 type Data = {
   success: boolean;
-  burnTxSignature?: string;
+  burnTxAddress?: string;
   rewaredTxAddress?: string;
 };
 
@@ -59,7 +63,7 @@ export default async function handler(
   );
   const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
-  let burnTxSignature;
+  let burnTxAddress;
   let rewaredTxAddress;
 
   if (
@@ -94,7 +98,7 @@ export default async function handler(
 
       // transaction.feePayer = firePublicKey;
 
-      // burnTxSignature = await sendAndConfirmTransaction(
+      // burnTxAddress = await sendAndConfirmTransaction(
       //   connection,
       //   transaction,
       //   [fireKeypair],
@@ -104,14 +108,14 @@ export default async function handler(
       //   }
       // );
 
-      // console.log("burned", burnTxSignature);
+      // console.log("burned", burnTxAddress);
       console.log("rewarding");
 
       // const nftMetasFromMetaplex = await metaplex
       //   .nfts()
       //   .findAllByOwner({ owner: rewardPublicKey });
 
-      // @ts-ignore
+      // Send reward
       const rewardMintAddress = new PublicKey(
         process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
       );
@@ -126,13 +130,13 @@ export default async function handler(
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
-      const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+      const associatedDestinationTokenAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         new PublicKey(tokenTransfers[0]?.fromUserAccount)
       );
 
       const receiverAccount = await connection.getAccountInfo(
-        associatedDestinationTokenAddr
+        associatedDestinationTokenAddress
       );
 
       const latestBlockhash2 = await connection.getLatestBlockhash();
@@ -144,7 +148,7 @@ export default async function handler(
         instructions.push(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
-            associatedDestinationTokenAddr,
+            associatedDestinationTokenAddress,
             new PublicKey(tokenTransfers[0]?.fromUserAccount),
             rewardMintAddress
           )
@@ -157,6 +161,51 @@ export default async function handler(
           toTokenAccountAddress,
           rewardPublicKey,
           1
+        )
+      );
+
+      // Send platform reward
+      const platformTokenMintAddress = new PublicKey(
+        PLATFORM_TOKEN_MINT_ADDRESS
+      );
+
+      const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+        platformTokenMintAddress,
+        rewardPublicKey
+      );
+
+      const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+        platformTokenMintAddress,
+        new PublicKey(tokenTransfers[0]?.fromUserAccount)
+      );
+
+      const associatedDestinationPlatformTokenAddress =
+        await getAssociatedTokenAddress(
+          platformTokenMintAddress,
+          new PublicKey(tokenTransfers[0]?.fromUserAccount)
+        );
+
+      const receiverPlatformTokenAccount = await connection.getAccountInfo(
+        associatedDestinationPlatformTokenAddress
+      );
+
+      if (!receiverPlatformTokenAccount) {
+        instructions.push(
+          createAssociatedTokenAccountInstruction(
+            rewardPublicKey,
+            associatedDestinationPlatformTokenAddress,
+            new PublicKey(tokenTransfers[0]?.fromUserAccount),
+            rewardMintAddress
+          )
+        );
+      }
+
+      instructions.push(
+        createTransferInstruction(
+          fromPlatformTokenAccountAddress,
+          toPlatformTokenAccountAddress,
+          rewardPublicKey,
+          mints.length
         )
       );
 
@@ -177,7 +226,7 @@ export default async function handler(
       console.log("tokenTransfers[0]", tokenTransfers[0]);
 
       axios.post(`${BASE_URL}/api/add-burn`, {
-        burnTxSignature,
+        burnTxAddress,
         rewaredTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: [mints],
@@ -188,5 +237,5 @@ export default async function handler(
     }
   }
 
-  res.status(200).json({ success: true, burnTxSignature, rewaredTxAddress });
+  res.status(200).json({ success: true, burnTxAddress, rewaredTxAddress });
 }
