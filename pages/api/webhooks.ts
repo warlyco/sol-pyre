@@ -78,7 +78,6 @@ export default async function handler(
         tokenAccountAddress: transfer.toTokenAccount,
       })
     );
-    const metaplex = Metaplex.make(connection);
 
     if (!mints.length) {
       res.status(400).json({ success: false });
@@ -88,8 +87,10 @@ export default async function handler(
 
     try {
       const latestBlockhash = await connection.getLatestBlockhash();
-      const transaction = new Transaction({ ...latestBlockhash });
+      const burnTransaction = new Transaction({ ...latestBlockhash });
       const burnInstructions: TransactionInstructionCtorFields[] = [];
+
+      console.log(1);
 
       for (const mint of mints) {
         burnInstructions.push(
@@ -103,13 +104,18 @@ export default async function handler(
         );
       }
 
-      transaction.add(...burnInstructions);
+      console.log(2);
 
-      transaction.feePayer = firePublicKey;
+      burnTransaction.add(...burnInstructions);
+
+      console.log(3);
+
+      burnTransaction.feePayer = firePublicKey;
+      console.log(4);
 
       burnTxAddress = await sendAndConfirmTransaction(
         connection,
-        transaction,
+        burnTransaction,
         [fireKeypair],
         {
           commitment: "confirmed",
