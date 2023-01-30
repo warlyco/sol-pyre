@@ -53,7 +53,7 @@ export default async function handler(
         burnRewardId,
         mintIds,
         userPublicKey,
-        burnTxAddress,
+        burnTxAddress: burnTxAddress || "fake-burn-tx-address",
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
