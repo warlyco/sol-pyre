@@ -17,6 +17,7 @@ export interface NftCardProps extends React.HTMLAttributes<HTMLDivElement> {
   collection: [];
   setNftToBurn: (nft: Nft | undefined) => void;
   nftsToBurn: Nft[];
+  showFireImage: boolean;
 }
 
 export const NftCard = ({
@@ -24,6 +25,7 @@ export const NftCard = ({
   collection,
   setNftToBurn,
   nftsToBurn,
+  showFireImage,
 }: NftCardProps) => {
   const { isLoading } = useIsLoading();
   const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
@@ -73,6 +75,7 @@ export const NftCard = ({
   return (
     <>
       <Card
+        className="relative"
         onClick={!!nft ? () => setNftToBurn(undefined) : openModal}
         project={
           !!nft
@@ -82,7 +85,17 @@ export const NftCard = ({
               }
             : undefined
         }
-      />
+      >
+        {showFireImage && (
+          <Image
+            className="absolute -bottom-2 left-0 opacity-70"
+            src="/images/purple-fire-2.gif"
+            alt="logo"
+            width="256"
+            height="256"
+          />
+        )}
+      </Card>
       <Overlay isVisible={isLoading || !!modal} modal={modal} />
     </>
   );

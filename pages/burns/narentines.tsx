@@ -41,6 +41,7 @@ export default function Home() {
   ]);
   const { publicKey, signTransaction } = wallet;
 
+  const [transferInProgress, setTransferInProgress] = useState(false);
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
 
   const fetchNFTs = useCallback(async () => {
@@ -75,8 +76,6 @@ export default function Home() {
     setIsLoading(false);
   }, [publicKey, setIsLoading, connection]);
 
-  const handleTransferNfts = useCallback(async () => {}, []);
-
   const handleTransferNft = useCallback(async () => {
     if (
       (!nftsToBurn[0] && !nftsToBurn[1] && !nftsToBurn[2]) ||
@@ -84,9 +83,9 @@ export default function Home() {
       !signTransaction
     )
       return;
-    setIsLoading(true);
+    setTransferInProgress(true);
     showToast({
-      primaryMessage: "🔥 Sending your NFT to the furnace 🔥",
+      primaryMessage: "Sending your NFTs to the furnace",
     });
 
     const instructions: TransactionInstructionCtorFields[] = [];
@@ -140,7 +139,7 @@ export default function Home() {
       connection,
       transaction,
       {
-        callback: () => setIsLoading(false),
+        callback: () => setTransferInProgress(false),
         successCallback: () => {
           showToast({
             primaryMessage: "🔥 NFTs sent to the furnace 🔥",
@@ -151,14 +150,7 @@ export default function Home() {
       },
       asWallet(wallet)
     );
-  }, [
-    nftsToBurn,
-    publicKey,
-    signTransaction,
-    setIsLoading,
-    connection,
-    wallet,
-  ]);
+  }, [nftsToBurn, publicKey, signTransaction, connection, wallet]);
 
   useEffect(() => {
     if (collection.length || hasBeenFetched) return;
@@ -201,6 +193,7 @@ export default function Home() {
             <div className="flex">
               <div className="px-4">
                 <NftCard
+                  showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}
                   setNftToBurn={(selectedNft) => {
                     setNftsToBurn([
@@ -215,6 +208,7 @@ export default function Home() {
               </div>
               <div className="px-4">
                 <NftCard
+                  showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}
                   setNftToBurn={(selectedNft) => {
                     setNftsToBurn([
@@ -229,6 +223,7 @@ export default function Home() {
               </div>
               <div className="px-4">
                 <NftCard
+                  showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}
                   setNftToBurn={(selectedNft) => {
                     setNftsToBurn([
@@ -247,26 +242,33 @@ export default function Home() {
         {!!publicKey && !!collection.length && (
           <div className="flex justify-between space-x-4 mt-16 max-w-md mx-auto">
             <button
-              className="text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full"
+              className={classNames(
+                "text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full transition-all duration-500 ease-in-out",
+                transferInProgress ? "w-[0px] -ml-10 opacity-0" : "w-full"
+              )}
               onClick={() => setNftsToBurn([undefined, undefined, undefined])}
             >
               Clear
             </button>
+
             <button
-              disabled={nftsToBurn.some((nft: Nft) => !nft)}
+              disabled={
+                nftsToBurn.some((nft: Nft) => !nft) || transferInProgress
+              }
               className={classNames(
-                "text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl text-2xl font-bold overflow-y-auto w-full",
+                "text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl text-2xl font-bold overflow-y-auto w-full flex justify-center items-center transition-all duration-500 ease-in-out",
                 {
                   "opacity-50 cursor-not-allowed": nftsToBurn.some(
-                    (nft: Nft) => !nft
+                    (nft: Nft) => !nft || transferInProgress
                   ),
+                  "bg-orange-600": transferInProgress,
                   "hover:bg-orange-600 hover:text-narentines-amber-200":
-                    !nftsToBurn.some((nft: Nft) => !nft),
+                    !nftsToBurn.some((nft: Nft) => !nft) || transferInProgress,
                 }
               )}
               onClick={handleTransferNft}
             >
-              Burn
+              {transferInProgress ? <Spinner /> : "Burn"}
             </button>
           </div>
         )}

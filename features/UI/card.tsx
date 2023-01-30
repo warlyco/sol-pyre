@@ -25,6 +25,7 @@ export const Card = ({ project, className, children, onClick }: CardProps) => {
             height="400"
             className="rounded-xl"
           />
+          {children}
         </div>
       ) : (
         <div className="bg-stone-800 rounded-xl h-56 w-56" />
