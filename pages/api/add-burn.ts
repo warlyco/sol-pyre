@@ -60,8 +60,13 @@ export default async function handler(
       },
     });
   } catch (error: unknown) {
-    console.log(error);
+    console.log("Error adding burn to database");
+    // @ts-ignore
+    console.log(error?.response?.errors);
+    // @ts-ignore
+    console.log(error?.message);
     res.status(500).json({ error });
+    return;
   }
 
   console.log("Burn added to database");
