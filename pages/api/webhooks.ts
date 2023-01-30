@@ -205,7 +205,7 @@ export default async function handler(
           fromPlatformTokenAccountAddress,
           toPlatformTokenAccountAddress,
           rewardPublicKey,
-          mints.length
+          1e8 * mints.length // 1e8 = 8 decimals
         )
       );
 
@@ -226,7 +226,7 @@ export default async function handler(
       console.log("tokenTransfers[0]", tokenTransfers[0]);
 
       axios.post(`${BASE_URL}/api/add-burn`, {
-        burnTxAddress,
+        burnTxAddress: burnTxAddress || "fake-burn-tx-address",
         rewaredTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: [mints],
