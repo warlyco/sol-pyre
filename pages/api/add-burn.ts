@@ -15,6 +15,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  console.log("add-burn called", req.body);
+
   const {
     burnRewardId,
     mintIds,
