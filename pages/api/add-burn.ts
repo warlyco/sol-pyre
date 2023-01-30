@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import request from "graphql-request";
 import { ADD_BURN } from "graphql/mutations/add-burn";

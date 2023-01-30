@@ -6,7 +6,7 @@ import {
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
-import { RPC_ENDPOINT } from "constants/constants";
+import { BASE_URL, RPC_ENDPOINT } from "constants/constants";
 import { base58 } from "ethers/lib/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
@@ -19,10 +19,11 @@ import {
 type Data = {
   success: boolean;
   burnTxSignature?: string;
-  rewardTxSignature?: string;
+  rewaredTxAddress?: string;
 };
 
-import { Metaplex } from "@metaplex-foundation/js";
+import { Metaplex, Nft } from "@metaplex-foundation/js";
+import axios from "axios";
 
 export default async function handler(
   req: NextApiRequest,
@@ -59,7 +60,7 @@ export default async function handler(
   const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
   let burnTxSignature;
-  let rewardTxSignature;
+  let rewaredTxAddress;
 
   if (
     body[0]?.type === "TRANSFER" &&
@@ -67,15 +68,15 @@ export default async function handler(
   ) {
     // handle burn and reward
     const { tokenTransfers } = body[0];
-    const mint = tokenTransfers[0]?.mint;
+    const mints = tokenTransfers.map((transfer: Nft) => transfer.mint);
     const tokenAccountAddress = tokenTransfers[0]?.toTokenAccount;
     const metaplex = Metaplex.make(connection);
 
-    if (!mint) {
+    if (!mints.length) {
       res.status(400).json({ success: false });
       return;
     }
-    console.log("burning mint:", mint);
+    console.log("burning mints:", mints);
 
     try {
       // const latestBlockhash = await connection.getLatestBlockhash();
@@ -161,7 +162,7 @@ export default async function handler(
 
       rewardTransaction.add(...instructions);
 
-      rewardTxSignature = await sendAndConfirmTransaction(
+      rewaredTxAddress = await sendAndConfirmTransaction(
         connection,
         rewardTransaction,
         [rewardKeypair],
@@ -171,11 +172,21 @@ export default async function handler(
         }
       );
 
-      console.log("rewarded", rewardTxSignature);
+      console.log("rewarded", rewaredTxAddress);
+      console.log("saving to db");
+      console.log("tokenTransfers[0]", tokenTransfers[0]);
+
+      axios.post(`${BASE_URL}/api/add-burn`, {
+        burnTxSignature,
+        rewaredTxAddress,
+        userPublicKey: tokenTransfers[0]?.fromUserAccount,
+        mintIds: [mints],
+        burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
+      });
     } catch (error) {
       console.log("error", error);
     }
   }
 
-  res.status(200).json({ success: true, burnTxSignature, rewardTxSignature });
+  res.status(200).json({ success: true, burnTxSignature, rewaredTxAddress });
 }
