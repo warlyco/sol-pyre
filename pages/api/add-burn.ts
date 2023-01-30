@@ -22,7 +22,7 @@ export default async function handler(
     mintIds,
     userPublicKey,
     burnTxAddress,
-    rewaredTxAddress,
+    rewardTxAddress,
   } = req.body;
 
   if (
@@ -30,14 +30,14 @@ export default async function handler(
     !mintIds ||
     !userPublicKey ||
     !burnTxAddress ||
-    !rewaredTxAddress
+    !rewardTxAddress
   ) {
     console.log("Missing required fields", {
       burnRewardId,
       mintIds,
       userPublicKey,
       burnTxAddress,
-      rewaredTxAddress,
+      rewardTxAddress,
     });
     res.status(400).json({ error: "Missing required fields" });
     return;
@@ -49,7 +49,7 @@ export default async function handler(
       url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
       document: ADD_BURN,
       variables: {
-        rewaredTxAddress,
+        rewardTxAddress,
         burnRewardId,
         mintIds,
         userPublicKey,

@@ -23,7 +23,7 @@ import {
 type Data = {
   success: boolean;
   burnTxAddress?: string;
-  rewaredTxAddress?: string;
+  rewardTxAddress?: string;
 };
 
 import { Metaplex, Nft } from "@metaplex-foundation/js";
@@ -64,7 +64,7 @@ export default async function handler(
   const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
   let burnTxAddress;
-  let rewaredTxAddress;
+  let rewardTxAddress;
 
   if (
     body[0]?.type === "TRANSFER" &&
@@ -211,7 +211,7 @@ export default async function handler(
 
       rewardTransaction.add(...instructions);
 
-      rewaredTxAddress = await sendAndConfirmTransaction(
+      rewardTxAddress = await sendAndConfirmTransaction(
         connection,
         rewardTransaction,
         [rewardKeypair],
@@ -221,13 +221,13 @@ export default async function handler(
         }
       );
 
-      console.log("rewarded", rewaredTxAddress);
+      console.log("rewarded", rewardTxAddress);
       console.log("saving to db");
       console.log("tokenTransfers[0]", tokenTransfers[0]);
 
       axios.post(`${BASE_URL}/api/add-burn`, {
         burnTxAddress: burnTxAddress || "fake-burn-tx-address",
-        rewaredTxAddress,
+        rewardTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: [mints],
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
@@ -237,5 +237,5 @@ export default async function handler(
     }
   }
 
-  res.status(200).json({ success: true, burnTxAddress, rewaredTxAddress });
+  res.status(200).json({ success: true, burnTxAddress, rewardTxAddress });
 }

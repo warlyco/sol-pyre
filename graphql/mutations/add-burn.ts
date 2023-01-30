@@ -3,7 +3,7 @@ import { gql } from "graphql-request";
 export const ADD_BURN = gql`
   mutation ADD_BURN(
     $userPublicKey: String
-    $rewaredTxAddress: String
+    $rewardTxAddress: String
     $burnTxAddress: String
     $burnRewardId: uuid
     $mintIds: jsonb
@@ -13,14 +13,14 @@ export const ADD_BURN = gql`
         burnRewardId: $burnRewardId
         burnTxAddress: $burnTxAddress
         mintIds: $mintIds
-        rewaredTxAddress: $rewaredTxAddress
+        rewardTxAddress: $rewardTxAddress
         userPublicKey: $userPublicKey
       }
     ) {
       burnRewardId
       burnTxAddress
       id
-      rewaredTxAddress
+      rewardTxAddress
       userPublicKey
     }
   }
