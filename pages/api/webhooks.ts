@@ -221,17 +221,19 @@ export default async function handler(
         }
       );
 
-      console.log("rewarded", rewardTxAddress);
-      console.log("saving to db");
-      console.log("tokenTransfers[0]", tokenTransfers[0]);
-
-      axios.post(`${BASE_URL}/api/add-burn`, {
+      const payload = {
         burnTxAddress: burnTxAddress || "fake-burn-tx-address",
         rewardTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: [mints],
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
-      });
+      };
+
+      console.log("rewarded", rewardTxAddress);
+      console.log(`saving to db ${BASE_URL}/api/add-burn`, payload);
+      console.log("tokenTransfers[0]", tokenTransfers[0]);
+
+      axios.post(`${BASE_URL}/api/add-burn`, payload);
     } catch (error) {
       console.log("error", error);
     }
