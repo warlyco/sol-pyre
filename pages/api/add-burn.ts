@@ -7,7 +7,7 @@ type Data =
       burnRewardId: string;
       mintIds: string[];
       userPublicKey: string;
-      transactionAddress: string;
+      burnTxAddress: string;
     }
   | { error: unknown };
 
@@ -15,17 +15,43 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { burnRewardId, mintIds, userPublicKey, transactionAddress } = req.body;
+  const {
+    burnRewardId,
+    mintIds,
+    userPublicKey,
+    burnTxAddress,
+    rewaredTxAddress,
+  } = req.body;
+
+  if (
+    !burnRewardId ||
+    !mintIds ||
+    !userPublicKey ||
+    !burnTxAddress ||
+    !rewaredTxAddress
+  ) {
+    console.log("Missing required fields", {
+      burnRewardId,
+      mintIds,
+      userPublicKey,
+      burnTxAddress,
+      rewaredTxAddress,
+    });
+    res.status(400).json({ error: "Missing required fields" });
+    return;
+  }
 
   try {
+    console.log("Adding burn to database");
     const { insert_burns_one } = await request({
       url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
       document: ADD_BURN,
       variables: {
+        rewaredTxAddress,
         burnRewardId,
         mintIds,
         userPublicKey,
-        transactionAddress,
+        burnTxAddress,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
@@ -36,7 +62,7 @@ export default async function handler(
     res.status(500).json({ error });
   }
 
-  res
-    .status(200)
-    .json({ burnRewardId, mintIds, userPublicKey, transactionAddress });
+  console.log("Burn added to database");
+
+  res.status(200).json({ burnRewardId, mintIds, userPublicKey, burnTxAddress });
 }
