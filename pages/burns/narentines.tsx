@@ -1,4 +1,7 @@
-import { BURNING_WALLET_ADDRESS } from "constants/constants";
+import {
+  BURNING_WALLET_ADDRESS,
+  COLLECTION_WALLET_ADDRESS,
+} from "constants/constants";
 import { CREATOR_ADDRESS } from "constants/constants";
 import { Metaplex, Nft } from "@metaplex-foundation/js";
 import Overlay from "features/UI/overlay";
@@ -10,12 +13,15 @@ import Spinner from "features/UI/spinner";
 import Image from "next/image";
 import {
   createAssociatedTokenAccountInstruction,
+  createCloseAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
+  NATIVE_MINT,
 } from "@solana/spl-token";
 import * as splToken from "@solana/spl-token";
 import {
   PublicKey,
+  SystemProgram,
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
@@ -27,6 +33,8 @@ import { BottomBanner } from "features/UI/bottom-banner";
 import { NftCard } from "features/UI/nft-card";
 import classNames from "classnames";
 import Modal from "features/UI/modal";
+
+const FEE_AMOUNT = 0.01;
 
 export default function Home() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -182,7 +190,30 @@ export default function Home() {
           1
         )
       );
+
+      instructions.push(
+        createCloseAccountInstruction(
+          fromTokenAccountAddress,
+          publicKey,
+          publicKey
+        )
+      );
     }
+
+    let ata = await getAssociatedTokenAddress(
+      NATIVE_MINT,
+      new PublicKey(COLLECTION_WALLET_ADDRESS)
+    );
+
+    const amount = 1e9 * FEE_AMOUNT;
+
+    instructions.push(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: ata,
+        lamports: amount,
+      })
+    );
 
     const latestBlockhash = await connection.getLatestBlockhash();
     const transaction = new Transaction({ ...latestBlockhash });

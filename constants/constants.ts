@@ -11,10 +11,6 @@ export const MINTING_WALLET_ADDRESS: string =
 export const BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL || "";
 export const DOMAIN_MINT_COST_IN_SOL: string =
   process.env.NEXT_PUBLIC_DOMAIN_MINT_COST_IN_SOL || "";
-export const MAINNET_TEST_COLLECTION_ADDRESS: string =
-  process.env.NEXT_PUBLIC_MAINNET_TEST_COLLECTION_ADDRESS || "";
-export const COLLECTION_WALLET_ADDRESS =
-  process.env.NEXT_PUBLIC_COLLECTION_WALLET_ADDRESS || "";
 export const PRIMARY_TOKEN_SYMBOL =
   process.env.NEXT_PUBLIC_PRIMARY_TOKEN_SYMBOL || "";
 export const PRIMARY_TOKEN_MINT_ADDRESS =
@@ -29,3 +25,5 @@ export const REWARD_TOKEN_MINT_ADDRESS =
   process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS || "";
 export const PLATFORM_TOKEN_MINT_ADDRESS =
   process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS || "";
+export const COLLECTION_WALLET_ADDRESS =
+  process.env.NEXT_PUBLIC_COLLECTION_WALLET_ADDRESS || "";
