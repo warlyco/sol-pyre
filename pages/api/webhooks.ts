@@ -85,7 +85,7 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    console.log("burning mints:", mints);
+    console.log("burning mints and closing ATAs:", mints);
 
     try {
       const latestBlockhash = await connection.getLatestBlockhash();
