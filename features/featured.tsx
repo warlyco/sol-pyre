@@ -10,8 +10,7 @@ export const Featured = () => {
     <div className="bg-stone-800 py-24 text-stone-300">
       <div className="text-center text-3xl md:text-4xl mb-8">Featured Burn</div>
       <div className="flex max-w-5xl lg:mx-auto border-2 border-orange-500 rounded-xl border-opacity-40 shadow-deep cursor-pointer hover:scale-[1.03] hover:shadow-deep-float mx-10 transition-all duration-300 ease-in-out">
-        {/* <Link className="flex flex-wrap" href="/burns/narentines"> */}
-        <Link className="flex flex-wrap" href="/">
+        <Link className="flex flex-wrap" href="/burns/narentines">
           <div className="w-full md:w-1/3 flex flex-shrink-0 h-72 md:h-auto">
             <Image
               style={{ objectFit: "cover" }}
@@ -28,11 +27,12 @@ export const Featured = () => {
             </div>
             <div className="space-y-2 text-xl">
               <div>
-                <span className="underline">Burn:</span> 3x Narentines
+                <span className="uppercase italic pr-2">Burn</span> 3x
+                Narentines
               </div>
               <div>
-                <span className="underline">Receive:</span> 1x Lupers Free Mint
-                WL Token
+                <span className="uppercase italic pr-2">Receive</span> 1x Lupers
+                Free Mint Token
               </div>
               <div className="py-4">
                 Narentines are celebrating the release of their upcoming

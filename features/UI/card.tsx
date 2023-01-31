@@ -17,19 +17,19 @@ export const Card = ({ project, className, children, onClick }: CardProps) => {
       ])}
     >
       {!!project?.imageUrl ? (
-        <div className="h-56 w-56">
+        <div className="h-[320px] w-[320px]">
           <Image
             src={`${project.imageUrl}`}
             alt=""
             width="400"
             height="400"
-            className="rounded-xl"
+            className="rounded-t-xl"
           />
-          {children}
         </div>
       ) : (
         <div className="bg-stone-800 rounded-xl h-56 w-56" />
       )}
+      <div className="p-4">{children}</div>
     </div>
   );
 };

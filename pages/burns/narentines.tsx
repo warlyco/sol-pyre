@@ -200,11 +200,6 @@ export default function Home() {
       );
     }
 
-    // let ata = await getAssociatedTokenAddress(
-    //   NATIVE_MINT,
-    //   new PublicKey(COLLECTION_WALLET_ADDRESS)
-    // );
-
     const amount = 1e9 * FEE_AMOUNT;
 
     instructions.push(

@@ -1,3 +1,4 @@
+import { Active } from "features/active";
 import { Featured } from "features/featured";
 import { Upcoming } from "features/upcoming";
 import Image from "next/image";
@@ -42,7 +43,8 @@ export default function Home() {
         `}</style>
       </div>
       <Featured />
-      <Upcoming />
+      <Active />
+      {/* <Upcoming /> */}
     </>
   );
 }
