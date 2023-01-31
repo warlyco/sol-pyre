@@ -266,8 +266,8 @@ export default function Home() {
             <div className="text-3xl text-center text-narentines-amber-200 mb-12">
               Select 3 Narentines to Sacrifice
             </div>
-            <div className="flex">
-              <div className="px-4">
+            <div className="flex flex-wrap justify-center">
+              <div className="p-4">
                 <NftCard
                   showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}
@@ -282,7 +282,7 @@ export default function Home() {
                   collection={collection}
                 />
               </div>
-              <div className="px-4">
+              <div className="p-4">
                 <NftCard
                   showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}
@@ -297,7 +297,7 @@ export default function Home() {
                   collection={collection}
                 />
               </div>
-              <div className="px-4">
+              <div className="p-4">
                 <NftCard
                   showFireImage={transferInProgress}
                   nftsToBurn={nftsToBurn}

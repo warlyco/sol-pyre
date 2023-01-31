@@ -56,8 +56,8 @@ export const NftCard = ({
               className="rounded-xl border-2 border-narentines-green-100 shadow-deep hover:shadow-deep-float"
               src={nft?.json?.image || ""}
               alt="Nft image"
-              width="200"
-              height="200"
+              width="330"
+              height="330"
             />
           </div>
         ))}
