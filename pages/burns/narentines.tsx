@@ -253,7 +253,7 @@ export default function Home() {
 
       <div>
         {!collection.length && (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center mb-16">
             <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
               {!!publicKey
                 ? "You do not have any NFTs in this burn campaign."
@@ -261,6 +261,16 @@ export default function Home() {
             </h1>
           </div>
         )}
+        <div className="flex justify-center">
+          <a
+            href="https://magiceden.io/marketplace/narentinesnft"
+            className="p-2 px-4 rounded-xl bg-narentines-amber-200 text-narentines-green-100 text-xl"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Buy Narentine NFTs
+          </a>
+        </div>
         {!!collection.length && (
           <>
             <div className="text-3xl text-center text-narentines-amber-200 mb-12">
@@ -349,6 +359,7 @@ export default function Home() {
           </div>
         )}
       </div>
+
       <BottomBanner>
         <a href="https://solpyre.com">
           <div className="text-xs flex bg-stone-900 p-2 px-4 rounded-full shadow-xl">
