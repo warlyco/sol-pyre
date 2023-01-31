@@ -29,7 +29,7 @@ export const Card = ({ project, className, children, onClick }: CardProps) => {
       ) : (
         <div className="bg-stone-800 rounded-xl h-[300px] w-[300px]" />
       )}
-      {!!children && <div className="p-4">{children}</div>}
+      {children}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const projects = [
     imageUrl: "/images/projects/narentines/narentines.webp",
     url: "/burns/narentines",
     description: (
-      <div className="space-y-2">
+      <div className="space-y-2 p-4">
         <div className="text-2xl font-bold mb-4">Narentines Burn</div>
         <div>
           <span className="underline">Burn:</span> 3x Narentines

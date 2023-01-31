@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import type { Wallet } from "@saberhq/solana-contrib";
 import type {
   BlockheightBasedTransactionConfirmationStrategy,
@@ -24,7 +25,9 @@ export const executeTransaction = async (
     callback?: () => void;
     successCallback?: () => void;
   },
-  wallet?: Wallet
+  wallet?: Wallet,
+  addBurnAttempt?: any,
+  mintIds?: []
 ): Promise<string> => {
   let txid = "";
   try {
@@ -41,12 +44,22 @@ export const executeTransaction = async (
     const confirmStrategy: BlockheightBasedTransactionConfirmationStrategy = {
       blockhash: latestBlockHash.blockhash,
       lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-      signature: signature,
+      signature,
     };
 
     const result = await connection.confirmTransaction(confirmStrategy);
 
-    console.log("Successful tx", result);
+    console.log("Successful tx", signature);
+    if (!!addBurnAttempt && !!wallet) {
+      addBurnAttempt({
+        variables: {
+          txAddress: signature,
+          walletAddress: wallet.publicKey,
+          mintIds,
+        },
+      });
+    }
+
     config.successCallback && config.successCallback();
   } catch (e) {
     console.log("Failed transaction: ", e, (e as SendTransactionError).logs);

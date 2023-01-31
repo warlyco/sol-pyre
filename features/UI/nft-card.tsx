@@ -81,11 +81,11 @@ export const NftCard = ({
       >
         {showFireImage && (
           <Image
-            className="absolute -bottom-2 left-0 opacity-70"
+            className="absolute -bottom-2 left-4 opacity-70"
             src="/images/purple-fire-2.gif"
             alt="logo"
-            width="256"
-            height="256"
+            width="260"
+            height="260"
           />
         )}
       </Card>
