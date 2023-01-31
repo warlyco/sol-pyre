@@ -9,6 +9,7 @@ type Data =
       userPublicKey: string;
       burnTxAddress: string;
       projectId: string;
+      transferTxAddress: string;
     }
   | { error: unknown };
 
@@ -25,6 +26,7 @@ export default async function handler(
     burnTxAddress,
     rewardTxAddress,
     projectId,
+    transferTxAddress,
   } = req.body;
 
   if (
@@ -33,7 +35,8 @@ export default async function handler(
     !userPublicKey ||
     !burnTxAddress ||
     !rewardTxAddress ||
-    !projectId
+    !projectId ||
+    !transferTxAddress
   ) {
     console.log("Missing required fields", {
       burnRewardId,
@@ -59,6 +62,7 @@ export default async function handler(
         userPublicKey,
         burnTxAddress,
         projectId,
+        transferTxAddress,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
@@ -78,5 +82,12 @@ export default async function handler(
 
   res
     .status(200)
-    .json({ burnRewardId, mintIds, userPublicKey, burnTxAddress, projectId });
+    .json({
+      burnRewardId,
+      mintIds,
+      userPublicKey,
+      burnTxAddress,
+      projectId,
+      transferTxAddress,
+    });
 }

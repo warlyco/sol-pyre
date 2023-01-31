@@ -8,6 +8,7 @@ export const ADD_BURN = gql`
     $burnRewardId: uuid
     $mintIds: jsonb
     $projectId: uuid
+    $transferTxAddress: String
   ) {
     insert_burns_one(
       object: {
@@ -17,6 +18,7 @@ export const ADD_BURN = gql`
         rewardTxAddress: $rewardTxAddress
         userPublicKey: $userPublicKey
         projectId: $projectId
+        transferTxAddress: $transferTxAddress
       }
     ) {
       projectId
@@ -25,6 +27,7 @@ export const ADD_BURN = gql`
       id
       rewardTxAddress
       userPublicKey
+      transferTxAddress
     }
   }
 `;

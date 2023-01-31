@@ -73,7 +73,7 @@ export default async function handler(
     body[0]?.tokenTransfers[0].toUserAccount === firePublicKey.toString()
   ) {
     // handle burn and reward
-    const { tokenTransfers } = body[0];
+    const { tokenTransfers, signature } = body[0];
     const mints = tokenTransfers.map(
       (transfer: { mint: string; toTokenAccount: string }) => ({
         mintAddress: transfer.mint,
@@ -250,7 +250,8 @@ export default async function handler(
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
         mintIds: mints.map((mint: { mintAddress: string }) => mint.mintAddress),
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
-        projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57",
+        projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57", // Narentines
+        transferTxAddress: signature,
       };
 
       console.log("rewarded", rewardTxAddress);
