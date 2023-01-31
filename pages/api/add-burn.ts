@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import request from "graphql-request";
 import { ADD_BURN } from "graphql/mutations/add-burn";
+import { log } from "next-axiom";
 
 type Data =
   | {
@@ -69,7 +70,7 @@ export default async function handler(
       },
     });
   } catch (error: unknown) {
-    console.log("Error adding burn to database");
+    log.debug("Error adding burn to database", { error });
     // @ts-ignore
     console.log(error?.response?.errors);
     // @ts-ignore
@@ -80,14 +81,12 @@ export default async function handler(
 
   console.log("Burn added to database");
 
-  res
-    .status(200)
-    .json({
-      burnRewardId,
-      mintIds,
-      userPublicKey,
-      burnTxAddress,
-      projectId,
-      transferTxAddress,
-    });
+  res.status(200).json({
+    burnRewardId,
+    mintIds,
+    userPublicKey,
+    burnTxAddress,
+    projectId,
+    transferTxAddress,
+  });
 }

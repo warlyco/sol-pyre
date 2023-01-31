@@ -1,3 +1,5 @@
+import { log } from "next-axiom";
+
 import {
   Connection,
   Keypair,
@@ -85,7 +87,7 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    console.log("burning mints and closing ATAs:", mints);
+    log.debug("burning mints and closing ATAs:", { mints });
 
     try {
       const latestBlockhash = await connection.getLatestBlockhash();
@@ -131,8 +133,7 @@ export default async function handler(
         }
       );
 
-      console.log("burned", burnTxAddress);
-      console.log("rewarding");
+      log.debug("burned", { burnTxAddress });
 
       // const nftMetasFromMetaplex = await metaplex
       //   .nfts()
@@ -254,15 +255,13 @@ export default async function handler(
         transferTxAddress: signature,
       };
 
-      console.log("rewarded", rewardTxAddress);
-      console.log(`saving to db ${BASE_URL}/api/add-burn`, payload);
-      console.log("tokenTransfers[0]", tokenTransfers[0]);
+      log.debug("rewarded", { rewardTxAddress });
 
       const res = await axios.post(`${BASE_URL}/api/add-burn`, payload);
 
       console.log(`posted to ${BASE_URL}/api/add-burn`, res);
     } catch (error) {
-      console.log("error", error);
+      log.debug("error in webhook burning and sending reward", { error });
     }
   }
 

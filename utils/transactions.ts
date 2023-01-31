@@ -9,6 +9,7 @@ import type {
   Transaction,
 } from "@solana/web3.js";
 import { sendAndConfirmRawTransaction } from "@solana/web3.js";
+import { log } from "next-axiom";
 
 export const executeTransaction = async (
   connection: Connection,
@@ -61,9 +62,8 @@ export const executeTransaction = async (
     }
 
     config.successCallback && config.successCallback();
-  } catch (e) {
-    console.log("Failed transaction: ", e, (e as SendTransactionError).logs);
-    console.log(e);
+  } catch (error) {
+    log.debug("error sending reward to burning wallet", { error });
   } finally {
     config.callback && config.callback();
   }
