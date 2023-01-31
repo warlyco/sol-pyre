@@ -26,7 +26,7 @@ export const Active = () => {
   return (
     <div className="bg-stone-900 py-20 md:px-0 text-stone-300">
       <div className="text-center text-3xl md:text-4xl pb-8">Active Burns</div>
-      <div className="max-w-5xl mx-auto overflow-x-auto">
+      <div className="max-w-5xl mx-auto overflow-x-hidden">
         <div className="flex flex-wrap md:-mx-4 justify-center">
           {projects.map((project) => (
             <div className="p-4" key={project.name}>
