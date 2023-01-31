@@ -23,6 +23,10 @@ export default function About() {
                 Gen 1 NFTs in exchange for Gen 2 mint tokens
               </li>
               <li>
+                ✨&nbsp;&nbsp;&nbsp;Create a collection reveal, where minters
+                exchange unrevealed NFTs for revealed ones
+              </li>
+              <li>
                 🟡&nbsp;&nbsp;&nbsp;Introduce new tokens by combining multiple
                 tokens into a new one (e.g. crafting or cooking)
               </li>

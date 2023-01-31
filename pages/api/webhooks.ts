@@ -248,8 +248,9 @@ export default async function handler(
         burnTxAddress,
         rewardTxAddress,
         userPublicKey: tokenTransfers[0]?.fromUserAccount,
-        mintIds: mints,
+        mintIds: mints.map((mint: { mintAddress: string }) => mint.mintAddress),
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
+        projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57",
       };
 
       console.log("rewarded", rewardTxAddress);

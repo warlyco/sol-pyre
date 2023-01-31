@@ -8,6 +8,7 @@ type Data =
       mintIds: string[];
       userPublicKey: string;
       burnTxAddress: string;
+      projectId: string;
     }
   | { error: unknown };
 
@@ -23,6 +24,7 @@ export default async function handler(
     userPublicKey,
     burnTxAddress,
     rewardTxAddress,
+    projectId,
   } = req.body;
 
   if (
@@ -30,7 +32,8 @@ export default async function handler(
     !mintIds ||
     !userPublicKey ||
     !burnTxAddress ||
-    !rewardTxAddress
+    !rewardTxAddress ||
+    !projectId
   ) {
     console.log("Missing required fields", {
       burnRewardId,
@@ -38,6 +41,7 @@ export default async function handler(
       userPublicKey,
       burnTxAddress,
       rewardTxAddress,
+      projectId,
     });
     res.status(400).json({ error: "Missing required fields" });
     return;
@@ -54,6 +58,7 @@ export default async function handler(
         mintIds,
         userPublicKey,
         burnTxAddress,
+        projectId,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
@@ -71,5 +76,7 @@ export default async function handler(
 
   console.log("Burn added to database");
 
-  res.status(200).json({ burnRewardId, mintIds, userPublicKey, burnTxAddress });
+  res
+    .status(200)
+    .json({ burnRewardId, mintIds, userPublicKey, burnTxAddress, projectId });
 }

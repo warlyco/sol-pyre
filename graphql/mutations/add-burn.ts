@@ -7,6 +7,7 @@ export const ADD_BURN = gql`
     $burnTxAddress: String
     $burnRewardId: uuid
     $mintIds: jsonb
+    $projectId: uuid
   ) {
     insert_burns_one(
       object: {
@@ -15,8 +16,10 @@ export const ADD_BURN = gql`
         mintIds: $mintIds
         rewardTxAddress: $rewardTxAddress
         userPublicKey: $userPublicKey
+        projectId: $projectId
       }
     ) {
+      projectId
       burnRewardId
       burnTxAddress
       id
