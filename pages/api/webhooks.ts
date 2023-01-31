@@ -8,6 +8,7 @@ import {
 } from "@solana/web3.js";
 import {
   BASE_URL,
+  COLLECTION_WALLET_ADDRESS,
   PLATFORM_TOKEN_MINT_ADDRESS,
   RPC_ENDPOINT,
 } from "constants/constants";
@@ -16,6 +17,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createAssociatedTokenAccountInstruction,
   createBurnCheckedInstruction,
+  createCloseAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
@@ -90,8 +92,6 @@ export default async function handler(
       const burnTransaction = new Transaction({ ...latestBlockhash });
       const burnInstructions: TransactionInstructionCtorFields[] = [];
 
-      console.log(1);
-
       for (const mint of mints) {
         burnInstructions.push(
           createBurnCheckedInstruction(
@@ -100,6 +100,14 @@ export default async function handler(
             firePublicKey,
             1,
             0
+          )
+        );
+
+        burnInstructions.push(
+          createCloseAccountInstruction(
+            new PublicKey(mint.tokenAccountAddress),
+            new PublicKey(COLLECTION_WALLET_ADDRESS),
+            firePublicKey
           )
         );
       }
