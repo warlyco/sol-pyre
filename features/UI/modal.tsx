@@ -7,7 +7,7 @@ export interface Props {
 
 export default function Modal({ setModal, children }: Props) {
   return (
-    <div className="flex flex-wrap justify-around relative">
+    <div className="md:flex md:flex-wrap justify-around relative">
       <div className="sticky flex w-full justify-end">
         <button
           className="self-end text-2xl"

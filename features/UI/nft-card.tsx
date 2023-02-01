@@ -43,7 +43,7 @@ export const NftCard = ({
           <div
             key={i}
             className={classNames(
-              "p-2 rounded-xl py-3 hover:scale-[1.03] my-4 flex-nowrap",
+              "p-2 rounded-xl py-3 hover:scale-[1.03] my-4 flex justify-center",
               nftsToBurn.includes(nft)
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
