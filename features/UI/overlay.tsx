@@ -14,7 +14,7 @@ const Overlay = ({ onClick, isVisible, modal }: Props) => {
         <div
           onClick={onClick}
           className={classNames({
-            "absolute top-0 right-0 bottom-0 left-0 -mr-8 transition-all duration-500 ease-in-out bg-opaque bg-black py-6 z-50":
+            "absolute top-0 right-0 bottom-0 left-0 -mr-8 transition-all duration-500 ease-in-out bg-opaque bg-black py-6 z-50 min-h-0":
               isVisible,
             "opacity-0 pointer-events-none": !isVisible,
           })}
