@@ -265,7 +265,7 @@ export default function Home() {
         <title>Narentines Pyre</title>
       </Head>
 
-      <div className="bg-narentines-amber-200 p-4 rounded-xl shadow-deep mb-12 max-w-sm mx-auto text-center text-xl">
+      <div className="bg-narentines-amber-200 p-4 rounded-xl shadow-deep mb-16 max-w-sm mx-auto text-center text-xl">
         <div>Narentines burned so far:</div>
         <div className="text-3xl mb-2 flex items-center justify-center h-10">
           {burnedNftsCount ? burnedNftsCount : <Spinner />}
@@ -281,12 +281,14 @@ export default function Home() {
       </div>
 
       {isLoading ? (
-        <Spinner />
+        <div className="flex w-full items-center justify-center">
+          <Spinner />
+        </div>
       ) : (
-        <div className="mt-32">
+        <div>
           {!collection.length && (
             <>
-              <div className="flex flex-col items-center mb-16">
+              <div className="flex flex-col items-center mb-8">
                 <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
                   {!!publicKey
                     ? "You do not have any NFTs in this burn campaign."
