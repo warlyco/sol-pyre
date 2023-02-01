@@ -33,12 +33,15 @@ import { BottomBanner } from "features/UI/bottom-banner";
 import { NftCard } from "features/UI/nft-card";
 import classNames from "classnames";
 import Modal from "features/UI/modal";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { ADD_BURN_ATTEMPT } from "graphql/mutations/add-burn-attempt";
+import { GET_BURNS_COUNT } from "graphql/queries/get-burns-count";
 
 const FEE_AMOUNT = 0.01;
 
 export default function Home() {
+  const { loading, data: burnsCountRes } = useQuery(GET_BURNS_COUNT);
+
   const [addBurnAttempt, { data, error }] = useMutation(ADD_BURN_ATTEMPT);
   const { isLoading, setIsLoading } = useIsLoading();
   const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
@@ -54,6 +57,14 @@ export default function Home() {
 
   const [transferInProgress, setTransferInProgress] = useState(false);
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
+  const [burnedNftsCount, setBurnedNftsCount] = useState(0);
+
+  useEffect(() => {
+    if (loading) return;
+    const { count } = burnsCountRes?.burns_aggregate.aggregate;
+
+    setBurnedNftsCount((count + 6) * 3); // +6 to temp account for missing db entries
+  }, [burnsCountRes, loading]);
 
   const showSuccessModal = () => {
     setModal(
@@ -260,134 +271,133 @@ export default function Home() {
   }
 
   return (
-    <div className="flex justify-center items-center bg-narentines-green-100 min-h-screen relative overflow-hidden">
+    <div className=" bg-narentines-green-100 min-h-screen relative overflow-hidden pt-32">
       <Head>
         <title>Narentines Pyre</title>
       </Head>
 
-      <div>
-        {!collection.length && (
-          <>
-            <div className="flex flex-col items-center mb-16">
-              <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
-                {!!publicKey
-                  ? "You do not have any NFTs in this burn campaign."
-                  : "Please connect your wallet"}
-              </h1>
-            </div>
-            <div className="flex justify-center">
-              <a
-                href="https://magiceden.io/marketplace/narentinesnft"
-                className="p-2 px-4 rounded-xl bg-narentines-amber-200 text-narentines-green-100 text-xl"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Buy Narentine NFTs
-              </a>
-            </div>
-          </>
-        )}
-        {!!collection.length && (
-          <>
-            <div className="text-3xl text-center text-narentines-amber-200 mb-12">
-              Select 3 Narentines to Sacrifice
-            </div>
-            <div className="flex flex-wrap justify-center">
-              <div className="p-4">
-                <NftCard
-                  showFireImage={transferInProgress}
-                  nftsToBurn={nftsToBurn}
-                  setNftToBurn={(selectedNft) => {
-                    setNftsToBurn([
-                      ...nftsToBurn.slice(0, 0),
-                      selectedNft,
-                      ...nftsToBurn.slice(0 + 1),
-                    ]);
-                  }}
-                  nft={nftsToBurn?.[0]}
-                  collection={collection}
-                />
-              </div>
-              <div className="p-4">
-                <NftCard
-                  showFireImage={transferInProgress}
-                  nftsToBurn={nftsToBurn}
-                  setNftToBurn={(selectedNft) => {
-                    setNftsToBurn([
-                      ...nftsToBurn.slice(0, 1),
-                      selectedNft,
-                      ...nftsToBurn.slice(1 + 1),
-                    ]);
-                  }}
-                  nft={nftsToBurn?.[1]}
-                  collection={collection}
-                />
-              </div>
-              <div className="p-4">
-                <NftCard
-                  showFireImage={transferInProgress}
-                  nftsToBurn={nftsToBurn}
-                  setNftToBurn={(selectedNft) => {
-                    setNftsToBurn([
-                      ...nftsToBurn.slice(0, 2),
-                      selectedNft,
-                      ...nftsToBurn.slice(2 + 1),
-                    ]);
-                  }}
-                  nft={nftsToBurn?.[2]}
-                  collection={collection}
-                />
-              </div>
-            </div>
-          </>
-        )}
-        {!!publicKey && !!collection.length && (
-          <>
-            <div className="flex justify-between space-x-4 mt-16 mb-8 max-w-md mx-auto">
-              <button
-                className={classNames(
-                  "text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full transition-all duration-500 ease-in-out",
-                  transferInProgress ? "w-[0px] -ml-10 opacity-0" : "w-full"
-                )}
-                onClick={() => setNftsToBurn([undefined, undefined, undefined])}
-              >
-                Clear
-              </button>
-
-              <button
-                disabled={
-                  nftsToBurn.some((nft: Nft) => !nft) || transferInProgress
-                }
-                className={classNames(
-                  "text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl text-2xl font-bold overflow-y-auto w-full flex justify-center items-center transition-all duration-500 ease-in-out",
-                  {
-                    "opacity-50 cursor-not-allowed": nftsToBurn.some(
-                      (nft: Nft) => !nft || transferInProgress
-                    ),
-                    "bg-orange-600": transferInProgress,
-                    "hover:bg-orange-600 hover:text-narentines-amber-200":
-                      !nftsToBurn.some((nft: Nft) => !nft) ||
-                      transferInProgress,
-                  }
-                )}
-                onClick={handleTransferNft}
-              >
-                {transferInProgress ? <Spinner /> : "Burn"}
-              </button>
-            </div>
-            <div className="flex justify-center">
-              <a
-                href="https://magiceden.io/marketplace/narentinesnft"
-                className="p-2 px-4 rounded-xl bg-narentines-amber-200 text-narentines-green-100 text-xl"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Buy Narentine NFTs
-              </a>
-            </div>
-          </>
-        )}
+      <div className="bg-narentines-amber-200 p-4 rounded-xl shadow-deep mb-12 max-w-sm mx-auto text-center text-xl">
+        <div>Narentines burned so far:</div>
+        <div className="text-3xl mb-2">{burnedNftsCount}</div>
+        <a
+          href="https://magiceden.io/marketplace/narentinesnft"
+          className="text-narentines-green-100 text-base underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Buy Narentines on Magic Eden
+        </a>
       </div>
+
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <div>
+          {!collection.length && (
+            <>
+              <div className="flex flex-col items-center mb-16">
+                <h1 className="text-3xl text-narentines-amber-200 max-w-md text-center">
+                  {!!publicKey
+                    ? "You do not have any NFTs in this burn campaign."
+                    : "Please connect your wallet"}
+                </h1>
+              </div>
+            </>
+          )}
+          {!!collection.length && (
+            <>
+              <div className="text-3xl text-center text-narentines-amber-200 mb-6">
+                Select 3 Narentines to Sacrifice
+              </div>
+              <div className="flex flex-wrap justify-center">
+                <div className="p-4">
+                  <NftCard
+                    showFireImage={transferInProgress}
+                    nftsToBurn={nftsToBurn}
+                    setNftToBurn={(selectedNft) => {
+                      setNftsToBurn([
+                        ...nftsToBurn.slice(0, 0),
+                        selectedNft,
+                        ...nftsToBurn.slice(0 + 1),
+                      ]);
+                    }}
+                    nft={nftsToBurn?.[0]}
+                    collection={collection}
+                  />
+                </div>
+                <div className="p-4">
+                  <NftCard
+                    showFireImage={transferInProgress}
+                    nftsToBurn={nftsToBurn}
+                    setNftToBurn={(selectedNft) => {
+                      setNftsToBurn([
+                        ...nftsToBurn.slice(0, 1),
+                        selectedNft,
+                        ...nftsToBurn.slice(1 + 1),
+                      ]);
+                    }}
+                    nft={nftsToBurn?.[1]}
+                    collection={collection}
+                  />
+                </div>
+                <div className="p-4">
+                  <NftCard
+                    showFireImage={transferInProgress}
+                    nftsToBurn={nftsToBurn}
+                    setNftToBurn={(selectedNft) => {
+                      setNftsToBurn([
+                        ...nftsToBurn.slice(0, 2),
+                        selectedNft,
+                        ...nftsToBurn.slice(2 + 1),
+                      ]);
+                    }}
+                    nft={nftsToBurn?.[2]}
+                    collection={collection}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          {!!publicKey && !!collection.length && (
+            <>
+              <div className="flex justify-between space-x-4 mt-16 mb-8 max-w-md mx-auto">
+                <button
+                  className={classNames(
+                    "text-narentines-green-100 border-2 border-narentines-green-100 bg-narentines-amber-200 p-4 py-2 rounded-xl shadow-xl hover:bg-gray-400 text-2xl font-bold overflow-y-auto w-full transition-all duration-500 ease-in-out",
+                    transferInProgress ? "w-[0px] -ml-10 opacity-0" : "w-full"
+                  )}
+                  onClick={() =>
+                    setNftsToBurn([undefined, undefined, undefined])
+                  }
+                >
+                  Clear
+                </button>
+
+                <button
+                  disabled={
+                    nftsToBurn.some((nft: Nft) => !nft) || transferInProgress
+                  }
+                  className={classNames(
+                    "text-narentines-amber-200 border-2 border-narentines-amber-200 bg-narentines-green-100 p-4 py-2 rounded-xl shadow-xl text-2xl font-bold overflow-y-auto w-full flex justify-center items-center transition-all duration-500 ease-in-out",
+                    {
+                      "opacity-50 cursor-not-allowed": nftsToBurn.some(
+                        (nft: Nft) => !nft || transferInProgress
+                      ),
+                      "bg-orange-600": transferInProgress,
+                      "hover:bg-orange-600 hover:text-narentines-amber-200":
+                        !nftsToBurn.some((nft: Nft) => !nft) ||
+                        transferInProgress,
+                    }
+                  )}
+                  onClick={handleTransferNft}
+                >
+                  {transferInProgress ? <Spinner /> : "Burn"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       <BottomBanner>
         <a href="https://solpyre.com">
