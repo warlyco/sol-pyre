@@ -259,17 +259,6 @@ export default function Home() {
     fetchNFTs();
   }, [addBurnAttempt, collection.length, fetchNFTs, hasBeenFetched]);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center bg-narentines-green-100 min-h-screen relative overflow-hidden">
-        <Head>
-          <title>Narentines Pyre</title>
-        </Head>
-        <Spinner />
-      </div>
-    );
-  }
-
   return (
     <div className=" bg-narentines-green-100 min-h-screen relative overflow-hidden pt-32">
       <Head>
@@ -278,7 +267,9 @@ export default function Home() {
 
       <div className="bg-narentines-amber-200 p-4 rounded-xl shadow-deep mb-12 max-w-sm mx-auto text-center text-xl">
         <div>Narentines burned so far:</div>
-        <div className="text-3xl mb-2">{burnedNftsCount}</div>
+        <div className="text-3xl mb-2 flex items-center justify-center h-10">
+          {burnedNftsCount ? burnedNftsCount : <Spinner />}
+        </div>
         <a
           href="https://magiceden.io/marketplace/narentinesnft"
           className="text-narentines-green-100 text-base underline"
@@ -292,7 +283,7 @@ export default function Home() {
       {isLoading ? (
         <Spinner />
       ) : (
-        <div>
+        <div className="mt-32">
           {!collection.length && (
             <>
               <div className="flex flex-col items-center mb-16">
