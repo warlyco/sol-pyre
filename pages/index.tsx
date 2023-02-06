@@ -1,5 +1,6 @@
 import { Active } from "features/active";
 import { Featured } from "features/featured";
+import { Previous } from "features/previous";
 import { Upcoming } from "features/upcoming";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,8 +43,9 @@ export default function Home() {
           }
         `}</style>
       </div>
-      <Featured />
-      <Active />
+      <Previous />
+      {/* <Featured /> */}
+      {/* <Active /> */}
       {/* <Upcoming /> */}
     </>
   );
